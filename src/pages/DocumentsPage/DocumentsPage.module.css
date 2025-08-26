@@ -1,0 +1,149 @@
+.documentList {
+  padding: 0 1.5rem;
+}
+
+.pageHead {
+  padding-top: 4rem;
+  display: flex;
+  justify-content: space-between;
+  column-gap: 24px;
+  align-items: flex-start;
+}
+
+.documentItems {
+  min-height: 60vh;
+}
+
+.pageTitle {
+  margin: 0;
+  sup {
+    span {
+      padding: 4.5px 8.3px;
+      background-color: rgb(248,249,250);
+      font-size: 1rem;
+      border-radius: 50%;
+    }
+  }
+}
+
+.documentFiltersForm {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 20px 0;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.paginationLink {
+  display: inline-block;
+  padding: 10px 15px;
+  margin: 0 5px;
+  background-color: #f4f4f4;
+  color: #333;
+  text-decoration: none;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.paginationLink.active {
+  background-color: #182093;
+  color: white;
+}
+
+.paginationLink:hover {
+  background-color: #e9ecef;
+}
+
+.searchContainer {
+  width: 84.3%;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.searchInput {
+  padding: 10px;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.searchButton {
+  padding: 10px 20px;
+  background-color: #182093;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.searchButton:hover {
+  background-color: #132675;
+}
+
+.documentFiltersForm {
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
+  justify-content: center;
+
+  .filterDataInputs {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    column-gap: 8px;
+    align-self: flex-start;
+
+    label {
+      margin-bottom: 0;
+    }
+
+    input {
+      width: 16.6%;
+      padding: .375rem .75rem;
+      font-size: 1rem;
+      font-weight: 400;
+      line-height: 1.5;
+      color: #282828;
+      background-color: #fff;
+      background-clip: padding-box;
+      border: 1px solid #ced4da;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      border-radius: 0;
+    }
+
+    select {
+      width: 24.2%;
+      height: 100%;
+      border: 1px solid #ccc;
+      padding: 8px 36px 8px 12px;
+      background: #fff;
+    }
+  }
+}
+
+.buttonSection {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .addButton {
+    margin-left: 8px;
+    padding: 10px 20px;
+    background-color: #182093;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+}

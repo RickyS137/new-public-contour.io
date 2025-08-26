@@ -1,0 +1,183 @@
+.microfloraList {
+  padding: 0 1rem;
+}
+
+.emptyPage {
+  height: 33vh;
+}
+
+.pageTitle {
+  padding-top: 4rem;
+
+  sup {
+    span {
+      padding: 4.5px 8.3px;
+      background-color: rgb(248,249,250);
+      font-size: 1rem;
+      border-radius: 50%;
+      width: 100%;
+    }
+  }
+}
+
+.customRow:nth-child(odd) {
+  background-color: #ffffff;
+  &:hover {
+    background-color: rgba(0,0,0,.075);
+  }
+}
+
+.customRow:nth-child(even) {
+  background-color: rgba(0,0,0,.035);
+  &:hover {
+    background-color: rgba(0,0,0,.075);
+  }
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 20px 0;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.paginationLink {
+  display: inline-block;
+  padding: 10px 15px;
+  margin: 0 5px;
+  background-color: #f4f4f4;
+  color: #333;
+  text-decoration: none;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.paginationLink.active {
+  background-color: #182093;
+  color: white;
+}
+
+.paginationLink:hover {
+  background-color: #e9ecef;
+}
+
+.searchContainer {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.searchInput {
+  padding: 10px;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.searchButton {
+  padding: 10px 20px;
+  background-color: #182093;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.searchButton:hover {
+  background-color: #132675;
+}
+
+.microfloraFiltersForm {
+  .microfloraSelects {
+    margin-top: 16px;
+    display: flex;
+    justify-content: space-between;
+
+    select {
+      width: 100%;
+      border: 1px solid #ccc;
+      padding: 8px 36px 8px 12px;
+      background: #fff;
+    }
+  }
+}
+
+.selectWrapper {
+  display: flex;
+  flex-direction: column;
+  width: 19%;
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+
+.selectWrapper label {
+  margin-bottom: 4px;
+  font-weight: bold;
+}
+
+.buttonSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .addButton {
+    margin-left: 8px;
+    padding: 10px 20px;
+    background-color: #182093;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+}
+
+.subtitle {
+  width: 100%;
+  text-align: justify;
+  font-style: italic;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.tableContainer {
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+th, td {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  text-align: center;
+  word-wrap: break-word;
+}
+th {
+  background-color: #f4f4f4;
+  text-align: center;
+}
+.groupHeader {
+  font-weight: bold;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  table {
+    font-size: 12px;
+  }
+  th, td {
+    padding: 6px;
+  }
+  .microfloraList {
+    padding: 10px;
+  }
+}
+@media (max-width: 600px) {
+  .tableContainer {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
