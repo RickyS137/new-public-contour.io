@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/new-public-contour.io/static/css/main.dc58dec7.css",
-    "main.js": "/new-public-contour.io/static/js/main.6e354cf1.js",
+    "main.js": "/new-public-contour.io/static/js/main.0c7af3d0.js",
     "static/media/gisbb_fav.png": "/new-public-contour.io/static/media/gisbb_fav.909cda7b00aa0e733fc3.png",
     "index.html": "/new-public-contour.io/index.html",
     "main.dc58dec7.css.map": "/new-public-contour.io/static/css/main.dc58dec7.css.map",
-    "main.6e354cf1.js.map": "/new-public-contour.io/static/js/main.6e354cf1.js.map"
+    "main.0c7af3d0.js.map": "/new-public-contour.io/static/js/main.0c7af3d0.js.map"
   },
   "entrypoints": [
     "static/css/main.dc58dec7.css",
-    "static/js/main.6e354cf1.js"
+    "static/js/main.0c7af3d0.js"
   ]
 }
