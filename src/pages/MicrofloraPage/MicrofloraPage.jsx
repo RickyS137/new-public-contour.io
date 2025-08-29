@@ -4,7 +4,6 @@ import cls from './MicrofloraPage.module.css'
 const MockData = [
   {
     organization: 'organization 1',
-    in_book: 'in book 1',
     kind: 'kind 1',
     view: 'view 1',
     name: 'name 1',
@@ -21,7 +20,6 @@ const MockData = [
   },
   {
     organization: 'organization 2',
-    in_book: 'in book 2',
     kind: 'kind 2',
     view: 'view 2',
     name: 'name 2',
@@ -38,7 +36,6 @@ const MockData = [
   },
   {
     organization: 'organization 3',
-    in_book: 'in book 3',
     kind: 'kind 3',
     view: 'view 3',
     name: 'name 3',
@@ -105,18 +102,17 @@ const MicrofloraPage = () => {
       <table>
         <thead>
           <tr>
-            <th rowspan="3">Организация</th>
-            <th rowspan="3">Отдел</th>
-            <th rowspan="3">Род</th>
-            <th rowspan="3">Вид</th>
-            <th rowspan="3">Наименование (код)</th>
-            <th rowspan="3">Тип культуры</th>
-            <th colspan="8" className={cls.groupHeader}>Наличие паспортных данных</th>
-            <th rowspan="3">Организм-источник</th>
+            <th rowSpan="3">Организация</th>
+            <th rowSpan="3">Род</th>
+            <th rowSpan="3">Вид</th>
+            <th rowSpan="3">Наименование (код)</th>
+            <th rowSpan="3">Тип культуры</th>
+            <th colSpan="8" className={cls.groupHeader}>Наличие паспортных данных</th>
+            <th rowSpan="3">Организм-источник</th>
           </tr>
           <tr>
-            <th colspan="6" className={cls.groupHeader}>Фенотипические характеристики</th>
-            <th colspan="2" className={cls.groupHeader}>Генотипические характеристики</th>
+            <th colSpan="6" className={cls.groupHeader}>Фенотипические характеристики</th>
+            <th colSpan="2" className={cls.groupHeader}>Генотипические характеристики</th>
           </tr>
           <tr>
             <th>Культурально-морфологические свойства</th>
@@ -133,7 +129,7 @@ const MicrofloraPage = () => {
           {
             MockData.length
             ? MockData.map((item, i) => (
-              <MicrofloraCard flora={item} key={16}/>
+              <MicrofloraCard flora={item} key={i}/>
             ))
             : <tr><td className={cls.emptyPage} colSpan={16}>Документы не найдены.</td></tr>
           }

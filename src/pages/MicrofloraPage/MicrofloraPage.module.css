@@ -1,5 +1,6 @@
 .microfloraList {
   padding: 0 1rem;
+  min-height: 840px;
 }
 
 .emptyPage {
@@ -175,9 +176,28 @@ th {
     padding: 10px;
   }
 }
-@media (max-width: 600px) {
+@media (max-width: 640px) {
   .tableContainer {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+  }
+
+  .buttonSection {
+    flex-direction: column;
+    row-gap: 8px;
+
+    input {
+      width: 94%;
+    }
+
+    * {
+      width: 100%;
+      margin: 0 !important;
+    }
+  }
+
+  .microfloraSelects {
+    flex-direction: column;
+    row-gap: 8px;
   }
 }

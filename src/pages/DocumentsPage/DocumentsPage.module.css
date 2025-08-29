@@ -106,7 +106,6 @@
     }
 
     input {
-      width: 16.6%;
       padding: .375rem .75rem;
       font-size: 1rem;
       font-weight: 400;
@@ -122,11 +121,25 @@
     }
 
     select {
-      width: 24.2%;
       height: 100%;
       border: 1px solid #ccc;
       padding: 8px 36px 8px 12px;
       background: #fff;
+    }
+
+    .filterInputs {
+      width: fit-content;
+      display: flex;
+      align-items: center;
+      column-gap: 16px;
+    }
+
+    .filterSelects {
+      width: fit-content;
+      display: flex;
+      align-items: center;
+      column-gap: 16px;
+      justify-content: flex-start;
     }
   }
 }
@@ -145,5 +158,55 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
+  }
+}
+
+@media(max-width: 640px) {
+  .pageHead {
+    flex-direction: column;
+    row-gap: 16px;
+  }
+
+  .searchContainer {
+    width: 100%;
+  }
+
+  .buttonSection {
+    flex-direction: column;
+    row-gap: 8px;
+
+    input {
+      width: 94%;
+    }
+
+    * {
+      width: 100%;
+      margin: 0 !important;
+    }
+  }
+
+  .filterDataInputs {
+    flex-direction: column;
+    row-gap: 8px;
+  }
+
+  .filterInputs {
+    width: 100% !important;
+    flex-direction: column;
+    row-gap: 8px;
+
+    input {
+      width: 93%;
+    }
+  }
+
+  .filterSelects {
+    width: 100% !important;
+    flex-direction: column;
+    row-gap: 8px;
+
+    select {
+      width: 100%;
+    }
   }
 }

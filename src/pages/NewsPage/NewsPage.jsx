@@ -4,22 +4,22 @@ import cls from './NewsPage.module.css'
 const MockData = [
   {
     title: 'Test title',
-    link: 'link1',
+    link: '/open-news/1',
     pub_date: '29.11.2004',
   },
   {
     title: 'Test title 2',
-    link: 'link2',
+    link: '/open-news/2',
     pub_date: '29.11.2004',
   },
   {
     title: 'Test title 3',
-    link: 'link3',
+    link: '/open-news/3',
     pub_date: '29.11.2004',
   },
   {
     title: 'Test title 4',
-    link: 'link4',
+    link: '/open-news/4',
     pub_date: '29.11.2004',
   },
 ]

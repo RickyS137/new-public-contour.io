@@ -44,7 +44,7 @@ const DocumentsCard = ({ document }) => {
           <span className={cls.author}>{document_author}</span>
         </div>
         <h5 className={cls.documentTitle}>
-          <Link href="/document/doc?id=">{title}</Link>
+          <Link to="/open-document/2">{title}</Link>
         </h5>
         <h6 className={cls.documentText}>
           №{num} от {effective_date}

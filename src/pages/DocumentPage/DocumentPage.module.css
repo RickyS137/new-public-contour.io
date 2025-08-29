@@ -1,0 +1,93 @@
+.document {
+  padding: 0 1rem;
+  min-height: 730px;
+}
+
+.documentInfo {
+  font-size: 1.5rem;
+  margin-top: 3rem;
+  color: #000;
+}
+
+.documentInner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  row-gap: 16px;
+  margin-top: 16px;
+}
+
+.docFieldname {
+  font-size: .8rem;
+  color: #6c757d;
+  margin-bottom: 8px;
+}
+
+.docParagraph {
+  color: #000;
+  margin-bottom: 0;
+}
+
+.documentFiles {
+  h4 {
+    margin: 0 0 16px;
+  }
+}
+
+.documentControlPanel {
+  margin-top: auto;
+  padding: 0px 1rem 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.blueBtn {
+  background-color: #fff;
+  border: 1px solid #183092;
+  color: #183092;
+  padding: 6px 12px;
+
+  &:hover {
+    background-color: #183092;
+    color: #fff;
+  }
+}
+
+.redBtn {
+  background-color: #dc3545;
+  border: 1px solid #dc3545;
+  color: #fff;
+  padding: 6px 12px;
+
+  &:hover {
+    background-color: #bb2d3b;
+    border: 1px solid #bb2d3b;
+    color: #fff;
+  }
+}
+
+.documentField {
+  width: 100%;
+}
+
+.documentField input,
+.documentField select {
+  width: 100%;
+}
+
+.documentField select {
+  height: 100%;
+  border: 1px solid #ccc;
+  padding: 8px 36px 8px 12px;
+  background: #fff;
+}
+
+.docLink {
+  color: #183092;
+  cursor: pointer;
+
+  &:hover {
+    color: #132675;
+  }
+}

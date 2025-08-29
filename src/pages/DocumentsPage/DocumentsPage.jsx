@@ -58,28 +58,32 @@ const DocumentsPage = () => {
               <button type="button" className={cls.addButton}>Добавить</button>
           </div>
           <div className={cls.filterDataInputs}>
-            <label for="date_from">Подписано после</label>
-            <input 
-              type="date" 
-              name="date_from" 
-              id="date_from" 
-              className={cls.dateInput} 
-              placeholder="Дата от"
-            />
-            <label for="date_to">Подписано до</label>
-            <input 
-              type="date" 
-              name="date_to" 
-              id="date_to" 
-              className={cls.dateInput} 
-              placeholder="Дата до"
-            />
-            <select name="kind" id="kind" className={cls.filterSelect}>
-              <option value="">Все типы</option>
-            </select>
-            <select name="status" id="status" className={cls.selectStatus}>
-              <option value="">Все статусы</option>
-            </select>
+            <div className={cls.filterInputs}>
+              <label for="date_from">Подписано после</label>
+              <input 
+                type="date" 
+                name="date_from" 
+                id="date_from" 
+                className={cls.dateInput} 
+                placeholder="Дата от"
+              />
+              <label for="date_to">Подписано до</label>
+              <input 
+                type="date" 
+                name="date_to" 
+                id="date_to" 
+                className={cls.dateInput} 
+                placeholder="Дата до"
+              />
+            </div>
+            <div className={cls.filterSelects}>
+              <select name="kind" id="kind" className={cls.filterSelect}>
+                <option value="">Все типы</option>
+              </select>
+              <select name="status" id="status" className={cls.selectStatus}>
+                <option value="">Все статусы</option>
+              </select>
+            </div>
           </div>
         </form>
       </div>

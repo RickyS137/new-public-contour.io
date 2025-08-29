@@ -1,9 +1,9 @@
+import { useNavigate } from 'react-router-dom'
 import cls from './MicrofloraCard.module.css'
 
 const MicrofloraCard = ({ flora }) => {
   const {
     organization,
-    in_book,
     kind,
     view,
     name,
@@ -18,11 +18,12 @@ const MicrofloraCard = ({ flora }) => {
     sequencing,
     object_of_symbiosis,
   } = flora
+
+  const navigate = useNavigate()
   
   return (
-    <tr className={cls.customRow}>
+    <tr className={cls.customRow} onClick={() => navigate('/open-microflora/1')}>
         <td>{organization || 'Не указано'}</td>
-        <td>{in_book || 'Не указано'}</td>
         <td>{kind || 'Не указано'}</td>
         <td>{view || 'Не указано'}</td>
         <td>{name || 'Не указано'}</td>
