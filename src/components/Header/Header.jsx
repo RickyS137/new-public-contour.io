@@ -1,8 +1,15 @@
 import { Link } from 'react-router-dom';
 import cls from './Header.module.css'
 import logo from '../../assets/gis_bb.png'
+import { useState } from 'react';
+import useMediaQuery from 'shared/useMediaQuery';
+import AuthModalMobile from 'components/AuthModalMobile/AuthModalMobile';
 
 const Header = () => {
+    const [open, setOpen] = useState(false);
+
+    const isMobile = useMediaQuery('(max-width: 768px)');
+
     function redirectToLogin() {
         const currentURL = window.location.origin; // Получаем текущий URL (например, https://example.com)
         const protocol = window.location.protocol; // Получаем протокол (например, https:)
@@ -72,11 +79,26 @@ const Header = () => {
                         </ul>
                     </nav>
                     <div>
-                        <span><div className={cls.login} onClick={redirectToLogin}>Войти</div></span>
+                        <button className={cls.login} 
+                            onClick={() => {
+                                if (isMobile) {setOpen(!open); console.log(open)} else {redirectToLogin()}
+                            }}>
+                            <span>Войти</span>
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
+        {isMobile && open && (
+            <AuthModalMobile
+                open={open}
+                onAccept={() => {
+                setOpen(false);
+                redirectToLogin();
+                }}
+                onCancel={() => setOpen(false)}
+            />
+        )}
     </header>
   )
 }

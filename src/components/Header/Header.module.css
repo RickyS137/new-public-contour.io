@@ -33,7 +33,14 @@
 }
 
 .header .login {
+  width: 64px;
+  height: 44px;
+  padding: 8px;
+  border-radius: 12px;
+  background-color: #132675;;
   color: #fff;
+  cursor: pointer;
+  border-color: #192345;
 }
 
 .header .pageLinks {
@@ -65,7 +72,7 @@
   }
 
   .header .login {
-    display: none;
+    margin-right: 8px;
   }
 
   .burgerMenu {
