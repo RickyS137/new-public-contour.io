@@ -1,11 +1,11 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { HashRouter, Route, Routes } from 'react-router-dom';
 import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
 import { routesConfig } from 'shared/routesConfig';
 
 function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Header/>
       <Routes>
         {
@@ -15,7 +15,7 @@ function App() {
         }
       </Routes>
       <Footer/>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
