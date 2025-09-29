@@ -1,5 +1,6 @@
 import NewsCard from 'components/cards/NewsCard'
 import cls from './NewsPage.module.css'
+import { useNavigate } from 'react-router-dom';
 
 const MockData = [
   {
@@ -25,6 +26,8 @@ const MockData = [
 ]
 
 const NewsPage = () => {
+  const navigate = useNavigate();
+
   return (
     <div className={cls.news}>
         <div className={cls.pageHead}>
@@ -45,7 +48,7 @@ const NewsPage = () => {
                 className={cls.searchInput}
                 />
                 <button type="submit" className={cls.searchButton}>Найти</button>
-                  <button type="button" className={cls.addButton}>Добавить</button>
+                  <button type="button" className={cls.addButton} onClick={() => navigate('/open-microflora-create/news')}>Добавить</button>
             </div>
             <div className={cls.filterDataInputs}>
                 <label htmlFor="date_from">С</label>
