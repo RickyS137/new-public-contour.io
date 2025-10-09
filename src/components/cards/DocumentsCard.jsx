@@ -7,14 +7,15 @@ const DocumentsCard = ({ document }) => {
   const [isDescActive, setIsDescActive] = useState(false);
 
   const {
-    title,
-    kind,
-    status,
-    document_author,
-    num,
-    effective_date,
-    description,
-    doc,
+    f_s_title,
+    f_opt_kind,
+    f_opt_status,
+    f_opt_author,
+    f_s_num,
+    f_dt_effective_date,
+    f_s_description,
+    f_a_doc,
+    name,
   } = document
 
   const statusCheck = (status) => {
@@ -37,17 +38,17 @@ const DocumentsCard = ({ document }) => {
   return (
     <div className={cls.documentItem}>
         <div className={cls.kindSection}>
-          <span className={cls.kind}>{kind}</span>
-          <span className={`${cls.status} ${statusCheck(status)}`}>{status}</span> 
+          <span className={cls.kind}>{f_opt_kind}</span>
+          <span className={`${cls.status} ${statusCheck(f_opt_status)}`}>{f_opt_status}</span> 
         </div>
         <div className={cls.authorSection}>
-          <span className={cls.author}>{document_author}</span>
+          <span className={cls.author}>{f_opt_author}</span>
         </div>
         <h5 className={cls.documentTitle}>
-          <Link to="/open-document/2">{title}</Link>
+          <Link to={`/open-document/${name}`}>{f_s_title}</Link>
         </h5>
         <h6 className={cls.documentText}>
-          №{num} от {effective_date}
+          №{f_s_num} от {f_dt_effective_date}
         </h6>
         <div className={cls.documentButtons}>
           <div className={cls.documentActions}>
@@ -56,9 +57,9 @@ const DocumentsCard = ({ document }) => {
           </div>
         </div>
         <div className={cls.description}>
-          <p className={`${cls.documentDescription} ${isDescActive ? cls.toggleActive : cls.toggleInactive}`}>{description}</p>
+          <p className={`${cls.documentDescription} ${isDescActive ? cls.toggleActive : cls.toggleInactive}`}>{f_s_description}</p>
           <Link className={`${cls.documentFiles} ${isDocActive ? cls.toggleActive : cls.toggleInactive}`} download="" href="">
-             {doc}
+             {f_a_doc}
           </Link>
         </div>
     </div>

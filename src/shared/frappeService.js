@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = process.env.BASE_URL;
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 class FrappeService {
   constructor({ baseUrl = BASE_URL, authToken = null } = {}) {
@@ -26,11 +26,15 @@ class FrappeService {
     return response.data.data;
   }
 
-  async getList(doctype, params = {}) {
-    const url = `/api/resource/${doctype}`;
-    const response = await this.client.get(url, { params });
-    return response.data.data;
-  }
+async getList(doctype, { fields = [] } = {}) {
+  const url = `/api/resource/${doctype}`;
+  
+  const queryParams = fields.length > 0 ? `?fields=[${fields.map(field => `"${field}"`).join(",")}]` : '';
+
+  const response = await this.client.get(`${url}${queryParams}`);
+  return response.data.data;
+}
+
 
   async createDoc(doctype, data) {
     const url = `/api/resource/${doctype}`;

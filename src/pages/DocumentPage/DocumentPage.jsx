@@ -1,23 +1,20 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import cls from './DocumentPage.module.css' // твой CSS-модуль
 import FieldInput from 'components/FieldInput/FieldInput'
+import useDocumentsStore from 'store/documents.store'
+import FrappeService from 'shared/frappeService'
+import { useParams } from 'react-router-dom'
+
+const frappe = new FrappeService();
 
 const DocumentPage = () => {
   const [isEdit, setIsEdit] = useState(false)
-  const [docData, setDocData] = useState({
-    title: 'Закон об экологии',
-    author: 'Министерство экологии',
-    num: '123-ФЗ',
-    date: '2025-08-20',
-    status: 'Действует',
-    kind: 'Федеральный закон',
-    description: 'Описание документа...',
-    file: '/files/law.pdf'
-  })
+  const { id } = useParams()
+  const { currentDocument, setCurrentDocument } = useDocumentsStore();
 
-  const handleChange = (field, value) => {
-    setDocData(prev => ({ ...prev, [field]: value }))
-  }
+  useEffect(() => {
+    frappe.getDoc('Cat NPA Document', id).then(res => {setCurrentDocument(res)});
+  },[id, setCurrentDocument])  
 
   return (
     <>
@@ -31,25 +28,22 @@ const DocumentPage = () => {
             isEdit={isEdit}
             type="input"
             title="Наименование документа"
-            value={docData.title}
-            onChange={val => handleChange('title', val)}
+            value={currentDocument.f_s_title}
           />
 
           <FieldInput
             isEdit={isEdit}
             type="select"
             title="Принявший орган"
-            value={docData.author}
+            value={currentDocument.f_opt_author}
             options={['Министерство экологии', 'Парламент', 'Правительство']}
-            onChange={val => handleChange('author', val)}
           />
 
           <FieldInput
             isEdit={isEdit}
             type="input"
             title="Номер документа"
-            value={docData.num}
-            onChange={val => handleChange('num', val)}
+            value={currentDocument.f_s_num}
           />
 
           <FieldInput
@@ -57,40 +51,36 @@ const DocumentPage = () => {
             type="input"
             inputType="date"
             title="Дата подписания"
-            value={docData.date}
-            onChange={val => handleChange('date', val)}
+            value={currentDocument.f_dt_date}
           />
 
           <FieldInput
             isEdit={isEdit}
             type="select"
             title="Статус"
-            value={docData.status}
+            value={currentDocument.f_opt_status}
             options={['Действует', 'Утратил силу', 'На рассмотрении']}
-            onChange={val => handleChange('status', val)}
           />
 
           <FieldInput
             isEdit={isEdit}
             type="select"
             title="Тип документа"
-            value={docData.kind}
+            value={currentDocument.f_opt_kind}
             options={['Федеральный закон', 'Постановление', 'Приказ']}
-            onChange={val => handleChange('kind', val)}
           />
 
           <FieldInput
             isEdit={isEdit}
             type="textarea"
             title="Описание"
-            value={docData.description}
-            onChange={val => handleChange('description', val)}
+            value={currentDocument.f_s_description}
           />
 
           <div className={cls.documentFiles}>
             <h4>Файлы</h4>
-            {docData.file ? (
-              <a href={docData.file} className={cls.docLink} target="_blank" rel="noreferrer">
+            {currentDocument.f_a_doc ? (
+              <a href='*' download={currentDocument.f_a_doc} className={cls.docLink} target="_blank" rel="noreferrer">
                 Скачать файл
               </a>
             ) : (

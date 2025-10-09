@@ -1,32 +1,21 @@
 import NewsCard from 'components/cards/NewsCard'
 import cls from './NewsPage.module.css'
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import FrappeService from 'shared/frappeService';
+import useNewsStore from 'store/news.store';
 
-const MockData = [
-  {
-    title: 'Test title',
-    link: '/open-news/1',
-    pub_date: '29.11.2004',
-  },
-  {
-    title: 'Test title 2',
-    link: '/open-news/2',
-    pub_date: '29.11.2004',
-  },
-  {
-    title: 'Test title 3',
-    link: '/open-news/3',
-    pub_date: '29.11.2004',
-  },
-  {
-    title: 'Test title 4',
-    link: '/open-news/4',
-    pub_date: '29.11.2004',
-  },
-]
+const frappe = new FrappeService()
 
 const NewsPage = () => {
   const navigate = useNavigate();
+
+  const { news, setNews } = useNewsStore();
+  
+  useEffect(() => {
+    frappe.getList('Cat News', { fields:["f_s_title", "f_s_content", "f_dt_pubdate", "name"] })
+    .then(res => setNews(res))
+  },[setNews])
 
   return (
     <div className={cls.news}>
@@ -34,7 +23,7 @@ const NewsPage = () => {
         <h2 className={cls.pageTitle}>
             Новости
             <sup>
-            <span id="total-news">0</span>
+            <span id="total-news">{news?.length}</span>
             </sup>
         </h2>
         <div className={cls.searchContainer}>
@@ -77,7 +66,7 @@ const NewsPage = () => {
             <span>Дата размещения</span>
           </div>
           {
-            MockData.map((item, i) => (
+            news && news.map((item, i) => (
               <NewsCard news={item} key={i}/>
             ))
           }

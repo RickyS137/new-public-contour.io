@@ -9,7 +9,7 @@ const FieldInput = ({
   options = [], 
   onChange 
 }) => {
-  const [currentValue, setCurrentValue] = useState(value)
+  const [currentValue, setCurrentValue] = useState(value)  
 
   useEffect(() => {
     setCurrentValue(value)

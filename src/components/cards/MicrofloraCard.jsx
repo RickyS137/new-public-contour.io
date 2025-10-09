@@ -3,40 +3,41 @@ import cls from './MicrofloraCard.module.css'
 
 const MicrofloraCard = ({ flora }) => {
   const {
-    organization,
-    kind,
-    view,
-    name,
-    culture_type,
-    culture_props,
-    enzyme_activity,
-    antigenic_structure,
-    stability_profile,
-    specific_activity,
-    other,
-    s_rrna,
-    sequencing,
-    object_of_symbiosis,
+    f_s_organization,
+    f_s_kind,
+    f_s_view,
+    f_s_title,
+    f_s_culture_type,
+    f_s_culture_props,
+    f_s_enzyme_activity,
+    f_s_antigenic_structure,
+    f_s_stability_profile,
+    f_s_specific_activity,
+    f_s_other,
+    f_s_16s_rrna,
+    f_s_sequencing,
+    f_s_object_of_symbiosis,
+    name
   } = flora
 
   const navigate = useNavigate()
   
   return (
     <tr className={cls.customRow} onClick={() => navigate('/open-microflora/1')}>
-        <td>{organization || 'Не указано'}</td>
-        <td>{kind || 'Не указано'}</td>
-        <td>{view || 'Не указано'}</td>
+        <td>{f_s_organization || 'Не указано'}</td>
+        <td>{f_s_kind || 'Не указано'}</td>
+        <td>{f_s_view || 'Не указано'}</td>
         <td>{name || 'Не указано'}</td>
-        <td>{culture_type || 'Не указано'}</td>
-        <td>{culture_props || 'Не указано'}</td>
-        <td>{enzyme_activity || 'Не указано'}</td>
-        <td>{antigenic_structure || 'Не указано'}</td>
-        <td>{stability_profile || 'Не указано'}</td>
-        <td>{specific_activity || 'Не указано'}</td>
-        <td>{other || 'Не указано'}</td>
-        <td>{s_rrna || 'Не указано'}</td>
-        <td>{sequencing || 'Не указано'}</td>
-        <td>{object_of_symbiosis || 'Не указано'}</td>
+        <td>{f_s_culture_type || 'Не указано'}</td>
+        <td>{f_s_culture_type || 'Не указано'}</td>
+        <td>{f_s_enzyme_activity || 'Не указано'}</td>
+        <td>{f_s_antigenic_structure || 'Не указано'}</td>
+        <td>{f_s_stability_profile || 'Не указано'}</td>
+        <td>{f_s_specific_activity || 'Не указано'}</td>
+        <td>{f_s_other || 'Не указано'}</td>
+        <td>{f_s_16s_rrna || 'Не указано'}</td>
+        <td>{f_s_sequencing || 'Не указано'}</td>
+        <td>{f_s_object_of_symbiosis || 'Не указано'}</td>
       </tr>
   )
 }

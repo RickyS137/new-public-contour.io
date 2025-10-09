@@ -3,20 +3,25 @@ import cls from './Auth.module.css';
 import useAuthStore from 'store/auth.store';
 
 const Auth = () => {
-  const { data, setUser, setPwd  } = useAuthStore();
+  const { data, setUser, setPwd, setIsAuthenticated, setUserInfo } = useAuthStore();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const frappe = new FrappeService();
-    frappe.client.post('/api/method/login', {
-      usr: data.usr,
-      pwd: data.pwd
-    }).then(response => {
-      console.log('Успешный вход:', response);
-    })
-    .catch(error => {
-      console.error('Ошибка входа:', error);
-    });
+    try {
+      const response = await frappe.client.post('/api/method/login', {
+        usr: data.usr,
+        pwd: data.pwd
+      });
+      setIsAuthenticated(true);
+      setUserInfo(response.data.full_name || response.data.message || data.usr);
+      console.log('Login successful:', response.data);
+      
+    } catch (error) {
+      setIsAuthenticated(false);
+      setUserInfo(null);
+      alert('Ошибка входа: ' + (error?.response?.data?.message || error.message));
+    }
   }
 
   return (

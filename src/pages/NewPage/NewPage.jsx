@@ -1,34 +1,67 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import cls from './NewPage.module.css'
 import FieldInput from 'components/FieldInput/FieldInput'
+import FrappeService from 'shared/frappeService'
+import { useParams } from 'react-router-dom'
+import useNewsStore from 'store/news.store'
+import useAuthStore from 'store/auth.store'
+
+const frappe = new FrappeService();
 
 const NewPage = () => {
-  const [post, setPost] = useState({
-    title: "О циркулирующих вариантах SARS-CoV-2 в Российской Федерации",
-    content: "По данным ФГБУ «НИИ гриппа им. А.А. Смородинцева» Минздрава России на 15 неделе 2025 г. (07.04.25 - 13.04.25) уровень заболеваемости населения гриппом и другими ОРВИ понизился по сравнению с предыдущей неделей на 10,1% и составил 63,0 на 10 000 населения, был ниже базовой линии (89,9) на 29,9% и ниже еженедельного эпидемического порога на 35,0% На 15 неделе по результатам ПЦР анализа клинических материалов от 12851 больного новый коронавирус SARS-CoV-2 был выявлен в 40 (0,3%) случаях. По результатам мониторинга генетической изменчивости возбудителя COVID-19 в первом квартале 2025 года в Российской Федерации доминирующей линией был вариант JN.1.16 и его производные (69,4% от всех исследованных образцов); 16,7% приходилось на линию LF.7 и ее производные. По данным ВОЗ (последнее обновление - февраль 2025 г.) наибольший интерес представляют следующие линии, получившие статус варианта под наблюдением (VUM): KP.2, KP.3, KP.3.1.1, JN.1.18, LB.1, XEC, LP.8.1. Все эти линии начали циркулировать в мире в 2024 г. Частота встречаемости линий VUM в Российской Федерации за первые три месяца 2025 года не превышала ни для какого из вариантов 6,5%. Доля линии KP.2 составляла 1,8% в январе и 2,2 % в марте 2025 г. Доля линии XEC была 3,3% - в январе и 2,1% - в марте. Доли линий KP.3, KP.3.1.1 и JN.1.18 составляли менее 1% от общего числа секвенированных геномов SARS-CoV-2 из Российской Федерации. Отмечается рост частоты встречаемости линии LP.8.1 среди российских изолятов вируса: с 1% - в феврале до 6,5% в марте 2025 г. По данным ВОЗ LP.8.1 в настоящее время является одним из двух вариантов линий VUM с растущей распространенностью во всем мире (второй – XEC). Учитывая имеющиеся данные, дополнительный риск для здоровья населения, связанный с LP.8.1, оценивается как низкий на глобальном уровне. Ожидается, что рекомендуемые вакцины от COVID-19 сохранят перекрестную реакцию с этим вариантом при симптоматическом и тяжелом течении заболевания, поскольку иммунный ответ на LP.8.1 сопоставим с XEC, который, как было показано, имеет ограниченный иммунный ответ на мРНК-бустерные вакцины JN.1 или KP.2. Таким образом, не предполагается, что дальнейшее распространение этого варианта увеличит нагрузку на национальные системы общественного здравоохранения по сравнению с другими подвидами Омикрона. Источник: https://www.influenza.spb.ru/surveillance/flu-bulletin// https://www.who.int/publications/m/item/risk-evaluation-for-sars-cov-2-variant-under-monitoring-lp81",
-    pubdate: "2025-08-25"
+  const { isAuthenticated } = useAuthStore();  
+
+  const params = useParams();
+  const { currentNew, setCurrentNew } = useNewsStore();
+
+  useEffect(() => {    
+    frappe.getDoc('Cat News', params.id).then(res => setCurrentNew(res));
+  },[params.id, setCurrentNew])
+
+  const [isEdit, setIsEdit] = useState(false)
+  const [editData, setEditData] = useState({
+    f_s_title: '',
+    f_s_content: '',
+    f_dt_pubdate: ''
   })
 
-  const [draftPost, setDraftPost] = useState(post)
-  const [isEdit, setIsEdit] = useState(false)
+  useEffect(() => {
+    if (currentNew) {
+      setEditData({
+        f_s_title: currentNew.f_s_title || '',
+        f_s_content: currentNew.f_s_content || '',
+        f_dt_pubdate: currentNew.f_dt_pubdate || ''
+      })
+    }
+  }, [currentNew])
 
-  const handleChange = (field) => (val) => {
-    setDraftPost(prev => ({ ...prev, [field]: val }))
+  const handleInputChange = (field, value) => {
+    setEditData(prev => ({
+      ...prev,
+      [field]: value
+    }))
   }
 
   const handleEdit = () => {
-    setDraftPost(post)
     setIsEdit(true)
   }
 
   const handleCancel = () => {
-    setDraftPost(post)
     setIsEdit(false)
+    setEditData({
+      f_s_title: currentNew.f_s_title || '',
+      f_s_content: currentNew.f_s_content || '',
+      f_dt_pubdate: currentNew.f_dt_pubdate || ''
+    })
   }
 
-  const handleSave = () => {
-    setPost(draftPost)
-    setIsEdit(false)
+  const handleSave = async () => {
+    try {
+      const updated = await frappe.updateDoc('Cat News', params.id, editData)
+      setCurrentNew(updated)
+      setIsEdit(false)
+    } catch (e) {
+    }
   }
 
   return (
@@ -38,8 +71,8 @@ const NewPage = () => {
           <FieldInput
             isEdit={isEdit}
             type="input"
-            value={draftPost.title}
-            onChange={handleChange('title')}
+            value={isEdit ? editData.f_s_title : currentNew.f_s_title}
+            onChange={val => handleInputChange('f_s_title', val)}
           />
         </h4>
 
@@ -47,8 +80,8 @@ const NewPage = () => {
           <FieldInput
             isEdit={isEdit}
             type="textarea"
-            value={draftPost.content}
-            onChange={handleChange('content')}
+            value={isEdit ? editData.f_s_content : currentNew.f_s_content}
+            onChange={val => handleInputChange('f_s_content', val)}
           />
         </div>
 
@@ -57,25 +90,32 @@ const NewPage = () => {
           <FieldInput
             isEdit={isEdit}
             type="input"
-            value={draftPost.pubdate}
-            onChange={handleChange('pubdate')}
+            value={isEdit ? editData.f_dt_pubdate : currentNew.f_dt_pubdate}
+            onChange={val => handleInputChange('f_dt_pubdate', val)}
           />
         </span>
       </div>
 
       <div className={cls.postControlPanel}>
-        <button className={cls.blueBtn}>Вернуться</button>
-        <div className={cls.adminControls}>
-          {isEdit ? (
-            <>
-              <button className={cls.blueBtn} onClick={handleCancel}>Отмена</button>
-              <button className={cls.blueBtn} onClick={handleSave}>Сохранить</button>
-            </>
-          ) : (
-            <button className={cls.blueBtn} onClick={handleEdit}>Редактировать</button>
-          )}
-          <button className={cls.redBtn}>Удалить</button>
-        </div>
+        <button className={cls.blueBtn} onClick={() => {window.history.back()}} >Вернуться</button>
+        {isAuthenticated && (
+          <div className={cls.adminControls}>
+            {isEdit ? (
+              <>
+                <button className={cls.blueBtn} onClick={handleCancel}>Отмена</button>
+                <button className={cls.blueBtn} onClick={handleSave}>Сохранить</button>
+              </>
+            ) : (
+              <button className={cls.blueBtn} onClick={handleEdit}>Редактировать</button>
+            )}
+            <button className={cls.redBtn} onClick={async () => {
+              if (window.confirm('Удалить новость?')) {
+                await frappe.deleteDoc('Cat News', params.id)
+                window.history.back()
+              }
+            }}>Удалить</button>
+          </div>
+        )}
       </div>
     </div>
   )

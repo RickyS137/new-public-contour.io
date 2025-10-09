@@ -1,58 +1,20 @@
 import MicrofloraCard from 'components/cards/MicrofloraCard'
 import cls from './MicrofloraPage.module.css'
+import FrappeService from 'shared/frappeService'
+import useMicrofloraStore from 'store/microflora.store'
+import { useEffect } from 'react'
 
-const MockData = [
-  {
-    organization: 'organization 1',
-    kind: 'kind 1',
-    view: 'view 1',
-    name: 'name 1',
-    culture_type: 'culture type 1',
-    culture_props: 'culture props 1',
-    enzyme_activity: 'enzyme activity 1',
-    antigenic_structure: 'antigenic structure 1',
-    stability_profile: 'stability profile 1',
-    specific_activity: 'specific activity 1',
-    other: 'other 1',
-    s_rrna: '16s_rrna 1',
-    sequencing: 'sequencing 1',
-    object_of_symbiosis: 'object of symbiosis 1',
-  },
-  {
-    organization: 'organization 2',
-    kind: 'kind 2',
-    view: 'view 2',
-    name: 'name 2',
-    culture_type: 'culture type 2',
-    culture_props: 'culture props 2',
-    enzyme_activity: 'enzyme activity 2',
-    antigenic_structure: 'antigenic structure 2',
-    stability_profile: 'stability profile 2',
-    specific_activity: 'specific activity 2',
-    other: 'other 2',
-    s_rrna: '16s_rrna 2',
-    sequencing: 'sequencing 2',
-    object_of_symbiosis: 'object of symbiosis 2',
-  },
-  {
-    organization: 'organization 3',
-    kind: 'kind 3',
-    view: 'view 3',
-    name: 'name 3',
-    culture_type: 'culture type 3',
-    culture_props: 'culture props 3',
-    enzyme_activity: 'enzyme activity 3',
-    antigenic_structure: 'antigenic structure 3',
-    stability_profile: 'stability profile 3',
-    specific_activity: 'specific activity 3',
-    other: 'other 3',
-    s_rrna: '16s_rrna 3',
-    sequencing: 'sequencing 3',
-    object_of_symbiosis: 'object of symbiosis 3',
-  },
-]
+const frappe = new FrappeService()
 
 const MicrofloraPage = () => {
+
+  const { microflora, setMicroflora } = useMicrofloraStore()
+
+  useEffect(() => {
+    frappe.getList('Cat Microflora', { fields:["f_s_organization ","f_s_in_book", "f_s_kind", "f_s_view", "f_s_name", "f_s_culture_type", "f_s_culture_props", "f_s_enzyme_activity", "f_s_antigenic_structure", "f_s_stability_profile", "f_s_specific_activity", "f_s_other", "f_s_16s_rrna", "f_s_sequencing", "f_s_object_of_symbiosis", "name"] })
+    .then(res => {setMicroflora(res)})
+  },[ setMicroflora ])
+
   return (
     <div className={cls.microfloraList}>
       <h2 className={cls.pageTitle}>
@@ -62,11 +24,11 @@ const MicrofloraPage = () => {
         </sup>
       </h2>
       <p className={cls.subtitle}>
-        Каталог ведется в соответствии с постановлением Правительства РФ от 16 апреля 2022 г. № 676 «Об утверждении Правил формирования, сохранения и развития государственной коллекции представителей нормальной микрофлоры человека, сельскохозяйственных животных и растений,а также криогенных банков образцов природных нормальных микробиоценозов (биоматериалов)»
+        Каталог ведется в соответствии с постановлением Правительства РФ от 16 апреля 2022 г. № 676 «Об утверждении Правил формирования, сохранения и развития государственной коллекции представителей нормальной микрофлоры человека, сельскохозяйственных животных и растений, а также криогенных банков образцов природных нормальных микробиоценозов (биоматериалов)» и на данный момент содержит 12707 записей 
       </p>
       <div>
         <div className={cls.searchContainer}>
-          <form id="microflora-filters-form" className={cls.microfloraFiltersForm}>
+          <form className={cls.microfloraFiltersForm}>
             <div className={cls.buttonSection}>
               <input 
                 type="text" 
@@ -127,8 +89,8 @@ const MicrofloraPage = () => {
         </thead>
         <tbody className={cls.floraItems}>
           {
-            MockData.length
-            ? MockData.map((item, i) => (
+            microflora.length
+            ? microflora.map((item, i) => (
               <MicrofloraCard flora={item} key={i}/>
             ))
             : <tr><td className={cls.emptyPage} colSpan={16}>Документы не найдены.</td></tr>

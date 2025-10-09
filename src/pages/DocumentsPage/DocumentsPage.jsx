@@ -1,47 +1,26 @@
 import DocumentsCard from 'components/cards/DocumentsCard'
 import cls from './DocumentsPage.module.css'
+import useDocumentsStore from 'store/documents.store';
+import { useEffect } from 'react';
+import FrappeService from 'shared/frappeService';
 
-const MockData = [
-  {
-    kind: 'testkind1',
-    status: 'Действует',
-    document_author: 'document author',
-    title: 'Title',
-    num: '1',
-    effective_date: '29.11.2004',
-    description: 'description 1',
-    doc: 'testdocument1',
-  },
-  {
-    kind: 'testkind2',
-    status: 'Утратил силу или отменен',
-    document_author: 'document author',
-    title: 'Title2',
-    num: '2',
-    effective_date: '29.11.2004',
-    description: 'description 2',
-    doc: 'testdocument2',
-  },
-  {
-    kind: 'testkind3',
-    status: 'test status',
-    document_author: 'document author',
-    title: 'Title3',
-    num: '3',
-    effective_date: '29.11.2004',
-    description: 'description 3',
-    doc: 'testdocument3',
-  },
-]
+const frappe = new FrappeService();
 
 const DocumentsPage = () => {
+  const { documents, setDocuments } = useDocumentsStore();
+
+  useEffect(() => {
+    frappe.getList('Cat NPA Document', { fields:["f_opt_kind", "f_opt_status", "f_opt_author", "f_s_title", "f_s_num", "f_dt_effective_date", "f_s_description", "f_a_doc", "name"] })
+    .then(res => setDocuments(res))
+  },[ setDocuments ])
+  
   return (
     <div className={cls.documentList}>
     <div className={cls.pageHead}>
       <h2 className={cls.pageTitle}>
         Документы 
         <sup>
-          <span id="total-documents">0</span>
+          <span id="total-documents">{documents.length}</span>
         </sup>
       </h2>
       <div className={cls.searchContainer}>
@@ -90,7 +69,7 @@ const DocumentsPage = () => {
     </div>
     <div className={cls.documentItems}>
       {
-        MockData.map((item, i) => (
+        documents.map((item, i) => (
           <DocumentsCard document={item} key={i}/>
         ))
       }
