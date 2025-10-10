@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react'
 import cls from './DocumentPage.module.css' // твой CSS-модуль
 import FieldInput from 'components/FieldInput/FieldInput'
 import useDocumentsStore from 'store/documents.store'
-import FrappeService from 'shared/frappeService'
+import { frappe } from 'shared/frappeService'
 import { useNavigate, useParams } from 'react-router-dom'
 
-const frappe = new FrappeService();
+// use shared frappe instance
 
 const DocumentPage = () => {
   const [isEdit, setIsEdit] = useState(false)

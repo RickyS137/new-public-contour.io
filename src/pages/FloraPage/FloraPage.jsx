@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react'
 import cls from './FloraPage.module.css'
 import { useNavigate, useParams } from 'react-router-dom'
 import FieldInput from 'components/FieldInput/FieldInput'
-import FrappeService from 'shared/frappeService'
+import { frappe } from 'shared/frappeService'
 import useMicrofloraStore from 'store/microflora.store'
 
-const frappe = new FrappeService()
+// use shared frappe instance
 
 const FloraPage = () => {
   const { id } = useParams()

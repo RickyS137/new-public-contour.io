@@ -2,11 +2,11 @@ import NewsCard from 'components/cards/NewsCard'
 import cls from './NewsPage.module.css'
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import FrappeService from 'shared/frappeService';
+import { frappe } from 'shared/frappeService';
 import useNewsStore from 'store/news.store';
 import Pagination from 'components/Pagination/Pagination'
 
-const frappe = new FrappeService()
+// use shared frappe instance
 
 const NewsPage = () => {
   const navigate = useNavigate();

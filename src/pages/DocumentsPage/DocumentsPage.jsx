@@ -2,10 +2,10 @@ import DocumentsCard from 'components/cards/DocumentsCard'
 import cls from './DocumentsPage.module.css'
 import useDocumentsStore from 'store/documents.store';
 import { useEffect, useState } from 'react';
-import FrappeService from 'shared/frappeService';
+import { frappe } from 'shared/frappeService';
 import Pagination from 'components/Pagination/Pagination';
 
-const frappe = new FrappeService();
+// use shared frappe instance
 
 const DocumentsPage = () => {
   const { documents, setDocuments } = useDocumentsStore();

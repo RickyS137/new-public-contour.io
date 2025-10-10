@@ -1,11 +1,11 @@
 import MicrofloraCard from 'components/cards/MicrofloraCard'
 import cls from './MicrofloraPage.module.css'
-import FrappeService from 'shared/frappeService'
+import { frappe } from 'shared/frappeService'
 import useMicrofloraStore from 'store/microflora.store'
 import { useState, useEffect } from 'react'
 import Pagination from 'components/Pagination/Pagination'
 
-const frappe = new FrappeService()
+// use shared frappe instance
 
 const MicrofloraPage = () => {
   const { microflora, setMicroflora } = useMicrofloraStore()

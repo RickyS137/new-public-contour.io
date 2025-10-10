@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import cls from './NewPage.module.css'
 import FieldInput from 'components/FieldInput/FieldInput'
-import FrappeService from 'shared/frappeService'
+import { frappe } from 'shared/frappeService'
 import { useNavigate, useParams } from 'react-router-dom'
 import useNewsStore from 'store/news.store'
 import useAuthStore from 'store/auth.store'
 
-const frappe = new FrappeService();
+// use shared frappe instance
 
 const NewPage = () => {
   const { isAuthenticated } = useAuthStore();  
