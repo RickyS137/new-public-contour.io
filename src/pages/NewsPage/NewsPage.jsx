@@ -1,9 +1,10 @@
 import NewsCard from 'components/cards/NewsCard'
 import cls from './NewsPage.module.css'
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import FrappeService from 'shared/frappeService';
 import useNewsStore from 'store/news.store';
+import Pagination from 'components/Pagination/Pagination'
 
 const frappe = new FrappeService()
 
@@ -11,11 +12,21 @@ const NewsPage = () => {
   const navigate = useNavigate();
 
   const { news, setNews } = useNewsStore();
+  const [currentPage, setCurrentPage] = useState(1)
+  const pageSize = 10
+  const totalItems = news ? news.length : 0
+  const startIndex = (currentPage - 1) * pageSize
+  const endIndex = startIndex + pageSize
+  const visibleNews = news ? news.slice(startIndex, endIndex) : []
   
   useEffect(() => {
-    frappe.getList('Cat News', { fields:["f_s_title", "f_s_content", "f_dt_pubdate", "name"] })
+    frappe.getList('Cat News', { 
+      start: startIndex,
+      page_length: pageSize,
+      fields:["f_s_title", "f_s_content", "f_dt_pubdate", "name"]
+     })
     .then(res => setNews(res))
-  },[setNews])
+  },[ setNews, startIndex ])
 
   return (
     <div className={cls.news}>
@@ -66,12 +77,12 @@ const NewsPage = () => {
             <span>Дата размещения</span>
           </div>
           {
-            news && news.map((item, i) => (
-              <NewsCard news={item} key={i}/>
+            visibleNews && visibleNews.map((item, i) => (
+              <NewsCard news={item} key={startIndex + i}/>
             ))
           }
         </div>
-        <div className="pagination" id="pagination"></div>
+        <Pagination totalItems={totalItems} pageSize={pageSize} currentPage={currentPage} onPageChange={setCurrentPage} />
     </div>
   )
 }

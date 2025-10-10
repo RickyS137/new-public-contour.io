@@ -21,9 +21,9 @@ const MicrofloraCard = ({ flora }) => {
   } = flora
 
   const navigate = useNavigate()
-  
+
   return (
-    <tr className={cls.customRow} onClick={() => navigate('/open-microflora/1')}>
+    <tr className={cls.customRow} onClick={() => navigate(`/open-microflora/${name}`)}>
         <td>{f_s_organization || 'Не указано'}</td>
         <td>{f_s_kind || 'Не указано'}</td>
         <td>{f_s_view || 'Не указано'}</td>

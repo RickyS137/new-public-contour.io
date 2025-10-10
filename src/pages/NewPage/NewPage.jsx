@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import cls from './NewPage.module.css'
 import FieldInput from 'components/FieldInput/FieldInput'
 import FrappeService from 'shared/frappeService'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import useNewsStore from 'store/news.store'
 import useAuthStore from 'store/auth.store'
 
@@ -12,6 +12,7 @@ const NewPage = () => {
   const { isAuthenticated } = useAuthStore();  
 
   const params = useParams();
+  const navigate = useNavigate();
   const { currentNew, setCurrentNew } = useNewsStore();
 
   useEffect(() => {    
@@ -61,6 +62,7 @@ const NewPage = () => {
       setCurrentNew(updated)
       setIsEdit(false)
     } catch (e) {
+      alert('Ошибка при сохранении: ' + (e?.response?.data?.message || e.message))
     }
   }
 
@@ -97,7 +99,7 @@ const NewPage = () => {
       </div>
 
       <div className={cls.postControlPanel}>
-        <button className={cls.blueBtn} onClick={() => {window.history.back()}} >Вернуться</button>
+        <button className={cls.blueBtn} onClick={() => navigate(-1)}>Вернуться</button>
         {isAuthenticated && (
           <div className={cls.adminControls}>
             {isEdit ? (

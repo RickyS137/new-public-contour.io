@@ -37,7 +37,7 @@ const Header = () => {
             getAuth()
             .then((res)=>{
                 if ( res ) {
-                    const {url,test_mode} = res;
+                    const {url} = res;
                         window.location.href = url;
                 } 
             })

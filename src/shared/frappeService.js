@@ -26,15 +26,28 @@ class FrappeService {
     return response.data.data;
   }
 
-async getList(doctype, { fields = [] } = {}) {
-  const url = `/api/resource/${doctype}`;
+  async getList(doctype, { fields = [], page_length = 0, start = 0 } = {}) {
+    const url = `/api/resource/${doctype}`;
+    const params = [];
   
-  const queryParams = fields.length > 0 ? `?fields=[${fields.map(field => `"${field}"`).join(",")}]` : '';
+    if (fields.length > 0) {
+      params.push(`fields=[${fields.map(field => `"${field}"`).join(",")}]`);
+    }
+  
+    // Frappe REST API uses limit_page_length and limit_start for pagination
+    if (page_length && Number(page_length) > 0) {
+      params.push(`limit_page_length=${encodeURIComponent(page_length)}`);
+    }
 
-  const response = await this.client.get(`${url}${queryParams}`);
-  return response.data.data;
-}
-
+    if (start && Number(start) >= 0) {
+      params.push(`limit_start=${encodeURIComponent(start)}`);
+    }
+    
+    const queryString = params.length > 0 ? `?${params.join('&')}` : '';
+  
+    const response = await this.client.get(`${url}${queryString}`);
+    return response.data.data;
+  }
 
   async createDoc(doctype, data) {
     const url = `/api/resource/${doctype}`;

@@ -2,25 +2,41 @@ import MicrofloraCard from 'components/cards/MicrofloraCard'
 import cls from './MicrofloraPage.module.css'
 import FrappeService from 'shared/frappeService'
 import useMicrofloraStore from 'store/microflora.store'
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
+import Pagination from 'components/Pagination/Pagination'
 
 const frappe = new FrappeService()
 
 const MicrofloraPage = () => {
-
   const { microflora, setMicroflora } = useMicrofloraStore()
+  const [currentPage, setCurrentPage] = useState(1)
+  const [ totalMicroflora, setTotalMicroflora ] = useState(0)
+  const pageSize = 20
+
+  const totalItems = 12707 // ideally this would come from the server
+  const startIndex = (currentPage - 1) * pageSize
+
+  // visible items are the ones returned by the server for the current page
+  const visibleMicroflora = microflora
 
   useEffect(() => {
-    frappe.getList('Cat Microflora', { fields:["f_s_organization ","f_s_in_book", "f_s_kind", "f_s_view", "f_s_name", "f_s_culture_type", "f_s_culture_props", "f_s_enzyme_activity", "f_s_antigenic_structure", "f_s_stability_profile", "f_s_specific_activity", "f_s_other", "f_s_16s_rrna", "f_s_sequencing", "f_s_object_of_symbiosis", "name"] })
+    frappe.getList('Cat Microflora', {
+      start: startIndex,
+      page_length: pageSize,
+      fields:["f_s_number","f_s_in_book", "f_s_kind", "f_s_view", "f_s_name", "f_s_culture_type", "f_s_culture_props", "f_s_enzyme_activity", "f_s_antigenic_structure", "f_s_stability_profile", "f_s_specific_activity", "f_s_other", "f_s_16s_rrna", "f_s_sequencing", "f_s_organization", "f_s_object_of_symbiosis", "f_s_note", "name"]
+     })
     .then(res => {setMicroflora(res)})
-  },[ setMicroflora ])
+
+    frappe.getList('Cat Microflora', { fields: ["name"], page_length: 0 })
+      .then(res => setTotalMicroflora(res.length));
+  },[ setMicroflora, currentPage, startIndex ])
 
   return (
     <div className={cls.microfloraList}>
       <h2 className={cls.pageTitle}>
         Единый каталог государственной коллекции<br/> представителей нормальной микрофлоры
         <sup>
-          <span id="total-flora">0</span>
+          <span id="total-flora">{totalMicroflora}</span>
         </sup>
       </h2>
       <p className={cls.subtitle}>
@@ -90,15 +106,15 @@ const MicrofloraPage = () => {
         <tbody className={cls.floraItems}>
           {
             microflora.length
-            ? microflora.map((item, i) => (
-              <MicrofloraCard flora={item} key={i}/>
+            ? visibleMicroflora.map((item, i) => (
+              <MicrofloraCard flora={item} key={startIndex + i}/>
             ))
             : <tr><td className={cls.emptyPage} colSpan={16}>Документы не найдены.</td></tr>
           }
         </tbody>
       </table>
     </div>
-    <div className="pagination" id="pagination"></div>
+    <Pagination totalItems={totalItems} pageSize={pageSize} currentPage={currentPage} onPageChange={setCurrentPage} />
     </div>
   )
 }

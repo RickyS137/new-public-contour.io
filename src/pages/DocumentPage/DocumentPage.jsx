@@ -3,13 +3,14 @@ import cls from './DocumentPage.module.css' // твой CSS-модуль
 import FieldInput from 'components/FieldInput/FieldInput'
 import useDocumentsStore from 'store/documents.store'
 import FrappeService from 'shared/frappeService'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const frappe = new FrappeService();
 
 const DocumentPage = () => {
   const [isEdit, setIsEdit] = useState(false)
   const { id } = useParams()
+  const navigate = useNavigate()
   const { currentDocument, setCurrentDocument } = useDocumentsStore();
 
   useEffect(() => {
@@ -91,7 +92,7 @@ const DocumentPage = () => {
       </div>
 
       <div className={cls.documentControlPanel}>
-        <button className={cls.blueBtn}>Вернуться</button>
+        <button className={cls.blueBtn} onClick={() => navigate(-1)}>Вернуться</button>
         <div id="admin-controls">
           {!isEdit ? (
             <button className={cls.blueBtn} onClick={() => setIsEdit(true)}>Редактировать</button>
