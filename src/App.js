@@ -6,7 +6,7 @@ import { routesConfig } from 'shared/routesConfig';
 function App() {
   return (
     <BrowserRouter>
-      {window.location.pathname === '/login' ? (
+      {window.location.pathname === '/auth' ? (
         <Routes>
           {routesConfig.map(({ path, element }, index) => (
             <Route key={path} path={path} element={element} />
