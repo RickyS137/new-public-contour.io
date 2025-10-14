@@ -4,30 +4,68 @@ import useDocumentsStore from 'store/documents.store';
 import { useEffect, useState } from 'react';
 import { frappe } from 'shared/frappeService';
 import Pagination from 'components/Pagination/Pagination';
+import { useNavigate } from 'react-router-dom';
 
-// use shared frappe instance
 
 const DocumentsPage = () => {
+  const navigate = useNavigate();
   const { documents, setDocuments } = useDocumentsStore();
   const [currentPage, setCurrentPage] = useState(1);
-  const [ totalDocuments, setTotalDocuments ] = useState(0);
+  const [totalDocuments, setTotalDocuments] = useState(0);
   const pageSize = 20;
-  const totalItems = documents.length;
   const startIndex = (currentPage - 1) * pageSize;
-  const endIndex = startIndex + pageSize;
-  const visibleDocuments = documents.slice(startIndex, endIndex);
+  const visibleDocuments = documents;
+
+  const [filters, setFilters] = useState({
+    search: '',
+    date_from: '',
+    date_to: '',
+    kind: '',
+    status: ''
+  });
+
+  const fetchDocumentsData = async () => {
+    try {
+      const conditions = [];
+      if (filters.search) conditions.push(['f_s_title', 'like', `%${filters.search}%`]);
+      if (filters.kind) conditions.push(['f_opt_kind', '=', filters.kind]);
+      if (filters.status) conditions.push(['f_opt_status', '=', filters.status]);
+      if (filters.date_from) conditions.push(['f_dt_effective_date', '>=', filters.date_from]);
+      if (filters.date_to) conditions.push(['f_dt_effective_date', '<=', filters.date_to]);
+
+      const filteredData = await frappe.getList('Cat NPA Document', {
+        start: startIndex,
+        page_length: pageSize,
+        fields: ["f_opt_kind", "f_opt_status", "f_opt_author", "f_s_title", "f_s_num", "f_dt_effective_date", "f_s_description", "f_a_doc", "name"],
+        filters: conditions
+      });
+      setDocuments(filteredData);
+
+      const totalFiltered = await frappe.getList('Cat NPA Document', {
+        fields: ["name"],
+        limit: 0,
+        filters: conditions
+      });
+      setTotalDocuments(totalFiltered.length);
+    } catch (error) {
+      console.error('Error fetching documents:', error);
+    }
+  };
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters(prev => ({ ...prev, [name]: value }));
+    setCurrentPage(1); 
+  };
+
+  const handleFilterSubmit = (e) => {
+    e.preventDefault();
+    fetchDocumentsData();
+  };
 
   useEffect(() => {
-    frappe.getList('Cat NPA Document', { 
-      start: startIndex,
-      page_length: pageSize,
-      fields:["f_opt_kind", "f_opt_status", "f_opt_author", "f_s_title", "f_s_num", "f_dt_effective_date", "f_s_description", "f_a_doc", "name"]
-     })
-    .then(res => setDocuments(res))
-
-    frappe.getList('Cat NPA Document', { fields: ["name"]})
-    .then(res => setTotalDocuments(res.length))
-  },[ setDocuments, startIndex ])
+    fetchDocumentsData();
+  }, [currentPage]);
   
   return (
     <div className={cls.documentList}>
@@ -39,7 +77,7 @@ const DocumentsPage = () => {
         </sup>
       </h2>
       <div className={cls.searchContainer}>
-        <form id="document-filters-form" className={cls.documentFiltersForm}>
+        <form id="document-filters-form" className={cls.documentFiltersForm} onSubmit={handleFilterSubmit}>
           <div className={cls.buttonSection}>
             <input 
               type="text" 
@@ -47,34 +85,50 @@ const DocumentsPage = () => {
               id="search" 
               placeholder="Поиск по названию" 
               className={cls.searchInput}
+              value={filters.search}
+              onChange={handleFilterChange}
             />
             <button type="submit" className={cls.searchButton}>Найти</button>
-              <button type="button" className={cls.addButton}>Добавить</button>
+            <button type="button" className={cls.addButton} onClick={() => navigate('/open-form/document')}>Добавить</button>
           </div>
           <div className={cls.filterDataInputs}>
             <div className={cls.filterInputs}>
-              <label for="date_from">Подписано после</label>
+              <label htmlFor="date_from">Подписано после</label>
               <input 
                 type="date" 
                 name="date_from" 
                 id="date_from" 
                 className={cls.dateInput} 
-                placeholder="Дата от"
+                value={filters.date_from}
+                onChange={handleFilterChange}
               />
-              <label for="date_to">Подписано до</label>
+              <label htmlFor="date_to">Подписано до</label>
               <input 
                 type="date" 
                 name="date_to" 
                 id="date_to" 
                 className={cls.dateInput} 
-                placeholder="Дата до"
+                value={filters.date_to}
+                onChange={handleFilterChange}
               />
             </div>
             <div className={cls.filterSelects}>
-              <select name="kind" id="kind" className={cls.filterSelect}>
+              <select 
+                name="kind" 
+                id="kind" 
+                className={cls.filterSelect}
+                value={filters.kind}
+                onChange={handleFilterChange}
+              >
                 <option value="">Все типы</option>
               </select>
-              <select name="status" id="status" className={cls.selectStatus}>
+              <select 
+                name="status" 
+                id="status" 
+                className={cls.selectStatus}
+                value={filters.status}
+                onChange={handleFilterChange}
+              >
                 <option value="">Все статусы</option>
               </select>
             </div>
@@ -89,7 +143,7 @@ const DocumentsPage = () => {
         ))
       }
     </div>
-    <Pagination totalItems={totalItems} pageSize={pageSize} currentPage={currentPage} onPageChange={setCurrentPage} />
+    <Pagination totalItems={totalDocuments} pageSize={pageSize} currentPage={currentPage} onPageChange={setCurrentPage} />
   </div>
   )
 }

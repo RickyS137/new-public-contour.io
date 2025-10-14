@@ -1,0 +1,17 @@
+.primaryButton {
+  padding: 4px 8px;
+  color: #fff;
+  background-color: #171717;
+  border: none;
+  border-radius: 8px;
+  margin-left: 8px;
+}
+
+.secondaryButton {
+  padding: 4px 8px;
+  color: #383838;
+  background-color: #e2e2e2;
+  border: none;
+  border-radius: 8px;
+  margin-left: 8px;
+}

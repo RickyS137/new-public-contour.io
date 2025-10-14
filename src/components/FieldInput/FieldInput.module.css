@@ -4,3 +4,25 @@
   font-weight: 420;
   line-height: 1.7;
 }
+
+.fieldName {
+  color: #525252;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.input,
+.textarea,
+.select {
+  margin-top: 4px;
+  width: 100%;
+  padding: 6px 8px;
+  border: none;
+  border-radius: 8px;
+  background: #f3f3f3;
+  font-size: 14px;
+  color: #383838;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s, background 0.2s;
+}

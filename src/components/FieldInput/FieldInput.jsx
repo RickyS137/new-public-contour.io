@@ -26,7 +26,7 @@ const FieldInput = ({
       case 'textarea':
         return (
           <textarea
-            className={cls.fieldNewValue}
+            className={cls.textarea}
             value={currentValue}
             onChange={handleChange}
             style={{ width: '100%', height: '400px' }}
@@ -51,7 +51,7 @@ const FieldInput = ({
       case 'select':
         return (
           <select
-            className={cls.fieldNewValue}
+            className={cls.select}
             value={currentValue}
             onChange={handleChange}
           >
@@ -62,12 +62,21 @@ const FieldInput = ({
             ))}
           </select>
         )
+      case 'date':
+        return (
+          <input
+            type="date"
+            className={cls.input}
+            value={currentValue}
+            onChange={handleChange}
+          />
+        )
       case 'input':
       default:
         return (
           <input
             type="text"
-            className={cls.fieldNewValue}
+            className={cls.input}
             value={currentValue}
             onChange={handleChange}
           />

@@ -12,21 +12,59 @@ const NewsPage = () => {
   const navigate = useNavigate();
 
   const { news, setNews } = useNewsStore();
-  const [currentPage, setCurrentPage] = useState(1)
-  const pageSize = 10
-  const totalItems = news ? news.length : 0
-  const startIndex = (currentPage - 1) * pageSize
-  const endIndex = startIndex + pageSize
-  const visibleNews = news ? news.slice(startIndex, endIndex) : []
-  
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalNews, setTotalNews] = useState(0);
+  const pageSize = 10;
+  const startIndex = (currentPage - 1) * pageSize;
+  const visibleNews = news;
+
+  const [filters, setFilters] = useState({
+    search: '',
+    date_from: '',
+    date_to: ''
+  });
+
+  const fetchNewsData = async () => {
+    try {
+      // Формируем условия фильтрации
+      const conditions = [];
+      if (filters.search) conditions.push(['f_s_title', 'like', `%${filters.search}%`]);
+      if (filters.date_from) conditions.push(['f_dt_pubdate', '>=', filters.date_from]);
+      if (filters.date_to) conditions.push(['f_dt_pubdate', '<=', filters.date_to]);
+
+      const filteredData = await frappe.getList('Cat News', {
+        start: startIndex,
+        page_length: pageSize,
+        fields: ["f_s_title", "f_s_content", "f_dt_pubdate", "name"],
+        filters: conditions
+      });
+      setNews(filteredData);
+
+      const totalFiltered = await frappe.getList('Cat News', {
+        fields: ["name"],
+        page_length: 0,
+        filters: conditions
+      });
+      setTotalNews(totalFiltered.length);
+    } catch (error) {
+      console.error('Error fetching news:', error);
+    }
+  };
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters(prev => ({ ...prev, [name]: value }));
+    setCurrentPage(1);
+  };
+
+  const handleFilterSubmit = (e) => {
+    e.preventDefault();
+    fetchNewsData();
+  };
+
   useEffect(() => {
-    frappe.getList('Cat News', { 
-      start: startIndex,
-      page_length: pageSize,
-      fields:["f_s_title", "f_s_content", "f_dt_pubdate", "name"]
-     })
-    .then(res => setNews(res))
-  },[ setNews, startIndex ])
+    fetchNewsData();
+  }, [currentPage]);
 
   return (
     <div className={cls.news}>
@@ -34,11 +72,11 @@ const NewsPage = () => {
         <h2 className={cls.pageTitle}>
             Новости
             <sup>
-            <span id="total-news">{news?.length}</span>
+            <span id="total-news">{totalNews}</span>
             </sup>
         </h2>
         <div className={cls.searchContainer}>
-            <form id={cls.newsFiltersForm} className={cls.newsFiltersForm}>
+            <form id={cls.newsFiltersForm} className={cls.newsFiltersForm} onSubmit={handleFilterSubmit}>
             <div className={cls.buttonSection}>
                 <input 
                 type="text" 
@@ -46,9 +84,11 @@ const NewsPage = () => {
                 id="search" 
                 placeholder="Поиск по названию" 
                 className={cls.searchInput}
+                value={filters.search}
+                onChange={handleFilterChange}
                 />
                 <button type="submit" className={cls.searchButton}>Найти</button>
-                  <button type="button" className={cls.addButton} onClick={() => navigate('/open-microflora-create/news')}>Добавить</button>
+                <button type="button" className={cls.addButton} onClick={() => navigate('/open-form/new')}>Добавить</button>
             </div>
             <div className={cls.filterDataInputs}>
                 <label htmlFor="date_from">С</label>
@@ -56,16 +96,18 @@ const NewsPage = () => {
                 type="date" 
                 name="date_from" 
                 id="date_from" 
-                className={cls.dateInput} 
-                placeholder="Дата от"
+                className={cls.dateInput}
+                value={filters.date_from}
+                onChange={handleFilterChange}
                 />
                 <label htmlFor="date_to">По</label>
                 <input 
                 type="date" 
                 name="date_to" 
                 id="date_to" 
-                className={cls.dateInput} 
-                placeholder="Дата до"
+                className={cls.dateInput}
+                value={filters.date_to}
+                onChange={handleFilterChange}
                 />
             </div>
             </form>
@@ -82,7 +124,7 @@ const NewsPage = () => {
             ))
           }
         </div>
-        <Pagination totalItems={totalItems} pageSize={pageSize} currentPage={currentPage} onPageChange={setCurrentPage} />
+        <Pagination totalItems={totalNews} pageSize={pageSize} currentPage={currentPage} onPageChange={setCurrentPage} />
     </div>
   )
 }

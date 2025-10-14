@@ -15,7 +15,7 @@ export const routesConfig = [
         element: <MainPage/>
     },
     {
-        path: '/login',
+        path: '/auth',
         element: <AuthPage/>
     },
     {
@@ -43,7 +43,7 @@ export const routesConfig = [
         element: <FloraPage/>
     },
     {
-        path: '/open-microflora-create/:name',
+        path: '/open-form/:name',
         element: <FormPage/>
     },
 ]

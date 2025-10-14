@@ -4,32 +4,73 @@ import { frappe } from 'shared/frappeService'
 import useMicrofloraStore from 'store/microflora.store'
 import { useState, useEffect } from 'react'
 import Pagination from 'components/Pagination/Pagination'
+import { useNavigate } from 'react-router-dom'
 
-// use shared frappe instance
 
 const MicrofloraPage = () => {
+  const navigate = useNavigate();
+
   const { microflora, setMicroflora } = useMicrofloraStore()
   const [currentPage, setCurrentPage] = useState(1)
-  const [ totalMicroflora, setTotalMicroflora ] = useState(0)
+  const [totalMicroflora, setTotalMicroflora] = useState(0)
   const pageSize = 20
-
-  const totalItems = 12707 // ideally this would come from the server
   const startIndex = (currentPage - 1) * pageSize
-
-  // visible items are the ones returned by the server for the current page
   const visibleMicroflora = microflora
 
-  useEffect(() => {
-    frappe.getList('Cat Microflora', {
-      start: startIndex,
-      page_length: pageSize,
-      fields:["f_s_number","f_s_in_book", "f_s_kind", "f_s_view", "f_s_name", "f_s_culture_type", "f_s_culture_props", "f_s_enzyme_activity", "f_s_antigenic_structure", "f_s_stability_profile", "f_s_specific_activity", "f_s_other", "f_s_16s_rrna", "f_s_sequencing", "f_s_organization", "f_s_object_of_symbiosis", "f_s_note", "name"]
-     })
-    .then(res => {setMicroflora(res)})
+  const [filters, setFilters] = useState({
+    search: '',
+    f_s_in_book: '',
+    f_s_kind: '',
+    f_s_view: '',
+    f_s_culture_type: '',
+    f_s_object_of_symbiosis: ''
+  });
 
-    frappe.getList('Cat Microflora', { fields: ["name"], page_length: 0 })
-      .then(res => setTotalMicroflora(res.length));
-  },[ setMicroflora, currentPage, startIndex ])
+  const fetchMicrofloraData = async (filters) => {
+    try {
+      const conditions = [];
+      if (filters.search) conditions.push(['f_s_name', 'like', `%${filters.search}%`]);
+      if (filters.f_s_in_book) conditions.push(['f_s_in_book', '=', filters.f_s_in_book]);
+      if (filters.f_s_kind) conditions.push(['f_s_kind', '=', filters.f_s_kind]);
+      if (filters.f_s_view) conditions.push(['f_s_view', '=', filters.f_s_view]);
+      if (filters.f_s_culture_type) conditions.push(['f_s_culture_type', '=', filters.f_s_culture_type]);
+      if (filters.f_s_object_of_symbiosis) conditions.push(['f_s_object_of_symbiosis', '=', filters.f_s_object_of_symbiosis]);
+
+      const filteredData = await frappe.getList('Cat Microflora', {
+        start: startIndex,
+        page_length: pageSize,
+        fields: ["f_s_number","f_s_in_book", "f_s_kind", "f_s_view", "f_s_name", "f_s_culture_type", "f_s_culture_props", "f_s_enzyme_activity", "f_s_antigenic_structure", "f_s_stability_profile", "f_s_specific_activity", "f_s_other", "f_s_16s_rrna", "f_s_sequencing", "f_s_organization", "f_s_object_of_symbiosis", "f_s_note", "name"],
+        filters: conditions
+      });
+      setMicroflora(filteredData);
+
+      const totalFiltered = await frappe.getList('Cat Microflora', {
+        fields: ["name"],
+        limit: 0,
+        filters: conditions
+      });
+      setTotalMicroflora(totalFiltered.length);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters(prev => ({ ...prev, [name]: value }));
+    setCurrentPage(1);
+  };
+
+  const handleFilterSubmit = (e) => {
+    e.preventDefault();
+    fetchMicrofloraData(filters);
+  };
+
+  useEffect(() => {
+    fetchMicrofloraData(filters);
+  }, [currentPage, startIndex]);
 
   return (
     <div className={cls.microfloraList}>
@@ -44,7 +85,7 @@ const MicrofloraPage = () => {
       </p>
       <div>
         <div className={cls.searchContainer}>
-          <form className={cls.microfloraFiltersForm}>
+          <form className={cls.microfloraFiltersForm} onSubmit={handleFilterSubmit}>
             <div className={cls.buttonSection}>
               <input 
                 type="text" 
@@ -52,24 +93,56 @@ const MicrofloraPage = () => {
                 id="search" 
                 placeholder="Поиск по наименованию" 
                 className={cls.searchInput}
+                value={filters.search}
+                onChange={handleFilterChange}
               />
               <button type="submit" className={cls.searchButton}>Найти</button>
-              <button type="button" className={cls.addButton}>Добавить</button>
+              <button type="button" className={cls.addButton} onClick={() => navigate('/open-form/flora')}>Добавить</button>
             </div>
             <div className={cls.microfloraSelects}>
-              <select name="f_s_in_book" id="f_s_in_book" className={cls.filterSelect}>
+              <select 
+                name="f_s_in_book" 
+                id="f_s_in_book" 
+                className={cls.filterSelect}
+                value={filters.f_s_in_book}
+                onChange={handleFilterChange}
+              >
                 <option value="">Все типы</option>
               </select>
-              <select name="f_s_kind" id="f_s_kind" className={cls.filterSelect}>
+              <select 
+                name="f_s_kind" 
+                id="f_s_kind" 
+                className={cls.filterSelect}
+                value={filters.f_s_kind}
+                onChange={handleFilterChange}
+              >
                 <option value="">Все роды</option>
               </select>
-              <select name="f_s_view" id="f_s_view" className={cls.filterSelect}>
+              <select 
+                name="f_s_view" 
+                id="f_s_view" 
+                className={cls.filterSelect}
+                value={filters.f_s_view}
+                onChange={handleFilterChange}
+              >
                 <option value="">Все виды</option>
               </select>
-              <select name="f_s_culture_type" id="f_s_culture_type" className={cls.filterSelect}>
+              <select 
+                name="f_s_culture_type" 
+                id="f_s_culture_type" 
+                className={cls.filterSelect}
+                value={filters.f_s_culture_type}
+                onChange={handleFilterChange}
+              >
                 <option value="">Все типы культур</option>
               </select>
-              <select name="f_s_object_of_symbiosis" id="f_s_object_of_symbiosis" className={cls.filterSelect}>
+              <select 
+                name="f_s_object_of_symbiosis" 
+                id="f_s_object_of_symbiosis" 
+                className={cls.filterSelect}
+                value={filters.f_s_object_of_symbiosis}
+                onChange={handleFilterChange}
+              >
                 <option value="">Все организмы-источники</option>
               </select>
             </div>
@@ -114,7 +187,7 @@ const MicrofloraPage = () => {
         </tbody>
       </table>
     </div>
-    <Pagination totalItems={totalItems} pageSize={pageSize} currentPage={currentPage} onPageChange={setCurrentPage} />
+    <Pagination totalItems={totalMicroflora} pageSize={pageSize} currentPage={currentPage} onPageChange={setCurrentPage} />
     </div>
   )
 }

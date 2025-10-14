@@ -47,7 +47,7 @@ class FrappeService {
     return response.data.data;
   }
 
-  async getList(doctype, { fields = [], page_length = 0, start = 0 } = {}) {
+  async getList(doctype, { fields = [], page_length = 0, start = 0, limit = null, filters = [] } = {}) {
     const url = `/api/resource/${doctype}`;
     const params = [];
 
@@ -61,6 +61,15 @@ class FrappeService {
 
     if (start && Number(start) >= 0) {
       params.push(`limit_start=${encodeURIComponent(start)}`);
+    }
+
+    if (limit !== null) {
+      params.push(`limit=${encodeURIComponent(limit)}`);
+    }
+
+    if (filters && filters.length > 0) {
+      const filtersJson = JSON.stringify(filters);
+      params.push(`filters=${encodeURIComponent(filtersJson)}`);
     }
 
     const queryString = params.length > 0 ? `?${params.join('&')}` : '';

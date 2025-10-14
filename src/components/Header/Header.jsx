@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import cls from './Header.module.css'
 import logo from '../../assets/gis_bb.png'
 import { useState } from 'react';
@@ -7,6 +7,7 @@ import AuthModalMobile from 'components/AuthModalMobile/AuthModalMobile';
 
 const Header = () => {
     const [open, setOpen] = useState(false);
+    const navigate = useNavigate();
 
     const isMobile = useMediaQuery('(max-width: 768px)');
 
@@ -81,7 +82,11 @@ const Header = () => {
                     <div>
                         <button className={cls.login} 
                             onClick={() => {
-                                if (isMobile) {setOpen(!open); console.log(open)} else {redirectToLogin()}
+                                if (isMobile) {setOpen(!open);} 
+                                else {
+                                    // redirectToLogin()
+                                    navigate('/auth')
+                                }
                             }}>
                             <span>Войти</span>
                         </button>
