@@ -5,6 +5,8 @@ const useNewsStore = create((set) => ({
     setNews: (news) => set({ news }),
     currentNew: {},
     setCurrentNew: (newItem) => set({ currentNew: newItem }),
+    latestNews: [],
+    setLatestNews: (latestNews) => set({ latestNews }),
 }));
 
 export default useNewsStore;

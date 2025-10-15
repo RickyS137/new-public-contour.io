@@ -1,0 +1,18 @@
+.newsItem {
+  text-align: left;
+  padding: 10px 15px;
+  display: flex;
+  align-items: flex-start;
+  column-gap: 8rem;
+  border-bottom: 1px solid gray;
+  border-bottom-width: 1px;
+
+    &:hover {
+    background-color: rgba(0,0,0,.075) !important;
+  }
+}
+
+.newsDate {
+  display: flex;
+  column-gap: 16px;
+}

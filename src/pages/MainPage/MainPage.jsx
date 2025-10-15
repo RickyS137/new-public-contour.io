@@ -4,8 +4,23 @@ import point1 from 'assets/point1.png'
 import point2 from 'assets/point2.png'
 import point3 from 'assets/point3.png'
 import point4 from 'assets/point4.png'
+import NewsItem from 'components/cards/NewsItem'
+import { useEffect } from 'react'
+import { frappe } from 'shared/frappeService'
+import useNewsStore from 'store/news.store'
 
 const MainPage = () => {
+    const { latestNews, setLatestNews } = useNewsStore();
+
+    useEffect(() => {
+        frappe.getList('Cat News', {
+            fields: ["f_s_title", "f_s_content", "f_dt_pubdate", "name"],
+            limit_page_length: 10,
+        }).then((data) => {
+            setLatestNews(data);
+        })
+    },[setLatestNews])    
+
   return (
     <div className={cls.mainPage}>
         <div className={cls.heroBlock}>
@@ -61,7 +76,11 @@ const MainPage = () => {
                     </div>
                     <hr/>
                     <div className={cls.news}>
-                        
+                        {latestNews.length && latestNews.map((item, index) => {
+                            return (
+                                <NewsItem key={index} item={item} />
+                            )
+                        })}
                     </div>
                     <div className={cls.newsButtonBlock}>
                         <a href="/open-news"><button className={cls.goToNewsButton}>Все новости</button></a>
