@@ -5,8 +5,6 @@ import FieldInput from 'components/FieldInput/FieldInput'
 import { frappe } from 'shared/frappeService'
 import useMicrofloraStore from 'store/microflora.store'
 
-// use shared frappe instance
-
 const FloraPage = () => {
   const { id } = useParams()
 
@@ -21,6 +19,88 @@ const FloraPage = () => {
   
 
   const [isEdit, setIsEdit] = useState(false)
+  const [editData, setEditData] = useState({
+    f_s_organization: '',
+    creationDate: '',
+    f_s_name: '',
+    f_s_in_book: '',
+    f_s_kind: '',
+    f_s_object_of_symbiosis: '',
+    f_s_view: '',
+    f_s_culture_type: '',
+    f_s_culture_props: '',
+    f_s_enzyme_activity: '',
+    f_s_antigenic_structure: '',
+    f_s_stability_profile: '',
+    f_s_specific_activity: '',
+    f_s_other: '',
+    f_s_16s_rrna: '',
+    f_s_sequencing: ''
+  })
+
+  useEffect(() => {
+    if (currentFlora) {
+      setEditData({
+        f_s_organization: currentFlora.f_s_organization || '',
+        creationDate: currentFlora.creationDate || '',
+        f_s_name: currentFlora.f_s_name || '',
+        f_s_in_book: currentFlora.f_s_in_book || '',
+        f_s_kind: currentFlora.f_s_kind || '',
+        f_s_object_of_symbiosis: currentFlora.f_s_object_of_symbiosis || '',
+        f_s_view: currentFlora.f_s_view || '',
+        f_s_culture_type: currentFlora.f_s_culture_type || '',
+        f_s_culture_props: currentFlora.f_s_culture_props || '',
+        f_s_enzyme_activity: currentFlora.f_s_enzyme_activity || '',
+        f_s_antigenic_structure: currentFlora.f_s_antigenic_structure || '',
+        f_s_stability_profile: currentFlora.f_s_stability_profile || '',
+        f_s_specific_activity: currentFlora.f_s_specific_activity || '',
+        f_s_other: currentFlora.f_s_other || '',
+        f_s_16s_rrna: currentFlora.f_s_16s_rrna || '',
+        f_s_sequencing: currentFlora.f_s_sequencing || ''
+      })
+    }
+  }, [currentFlora])
+
+  const handleInputChange = (field, value) => {
+    setEditData(prev => ({
+      ...prev,
+      [field]: value
+    }))
+  }
+
+  const handleCancel = () => {
+    setIsEdit(false)
+    if (currentFlora) {
+      setEditData({
+        f_s_organization: currentFlora.f_s_organization || '',
+        creationDate: currentFlora.creationDate || '',
+        f_s_name: currentFlora.f_s_name || '',
+        f_s_in_book: currentFlora.f_s_in_book || '',
+        f_s_kind: currentFlora.f_s_kind || '',
+        f_s_object_of_symbiosis: currentFlora.f_s_object_of_symbiosis || '',
+        f_s_view: currentFlora.f_s_view || '',
+        f_s_culture_type: currentFlora.f_s_culture_type || '',
+        f_s_culture_props: currentFlora.f_s_culture_props || '',
+        f_s_enzyme_activity: currentFlora.f_s_enzyme_activity || '',
+        f_s_antigenic_structure: currentFlora.f_s_antigenic_structure || '',
+        f_s_stability_profile: currentFlora.f_s_stability_profile || '',
+        f_s_specific_activity: currentFlora.f_s_specific_activity || '',
+        f_s_other: currentFlora.f_s_other || '',
+        f_s_16s_rrna: currentFlora.f_s_16s_rrna || '',
+        f_s_sequencing: currentFlora.f_s_sequencing || ''
+      })
+    }
+  }
+
+  const handleSave = async () => {
+    try {
+      const updated = await frappe.updateDoc('Cat Microflora', id, editData)
+      setCurrentFlora(updated)
+      setIsEdit(false)
+    } catch (e) {
+      alert('Ошибка при сохранении: ' + (e?.response?.data?.message || e.message))
+    }
+  }
 
   return (
     <div className={cls.floraInfo}>
@@ -34,7 +114,8 @@ const FloraPage = () => {
             <FieldInput
               title="Организация"
               type="input"
-              value={currentFlora.f_s_organization}
+              value={isEdit ? editData.f_s_organization : currentFlora.f_s_organization}
+              onChange={val => handleInputChange('f_s_organization', val)}
               isEdit={isEdit}
             />
           </div>
@@ -42,7 +123,8 @@ const FloraPage = () => {
             <FieldInput
               title="Дата создания"
               type="input"
-              value={currentFlora.creationDate}
+              value={isEdit ? editData.creationDate : currentFlora.creationDate}
+              onChange={val => handleInputChange('creationDate', val)}
               isEdit={isEdit}
             />
           </div>
@@ -52,7 +134,8 @@ const FloraPage = () => {
             <FieldInput
               title="Наименование (код)"
               type="input"
-              value={currentFlora.f_s_name}
+              value={isEdit ? editData.f_s_name : currentFlora.f_s_name}
+              onChange={val => handleInputChange('f_s_name', val)}
               isEdit={isEdit}
               />
           </div>
@@ -63,7 +146,8 @@ const FloraPage = () => {
             <FieldInput
               title="Отдел"
               type="select"
-              value={currentFlora.f_s_in_book}
+              value={isEdit ? editData.f_s_in_book : currentFlora.f_s_in_book}
+              onChange={val => handleInputChange('f_s_in_book', val)}
               options={['Отдел A', 'Отдел B']}
               isEdit={isEdit}
               />
@@ -75,7 +159,8 @@ const FloraPage = () => {
             <FieldInput
               title="Род"
               type="select"
-              value={currentFlora.f_s_kind}
+              value={isEdit ? editData.f_s_kind : currentFlora.f_s_kind}
+              onChange={val => handleInputChange('f_s_kind', val)}
               options={['Род A', 'Род B']}
               isEdit={isEdit}
             />
@@ -84,7 +169,8 @@ const FloraPage = () => {
             <FieldInput
               title="Организм-источник"
               type="select"
-              value={currentFlora.f_s_object_of_symbiosis}
+              value={isEdit ? editData.f_s_object_of_symbiosis : currentFlora.f_s_object_of_symbiosis}
+              onChange={val => handleInputChange('f_s_object_of_symbiosis', val)}
               options={['Организм X', 'Организм Y']}
               isEdit={isEdit}
             />
@@ -96,7 +182,8 @@ const FloraPage = () => {
             <FieldInput
               title="Вид"
               type="select"
-              value={currentFlora.f_s_view}
+              value={isEdit ? editData.f_s_view : currentFlora.f_s_view}
+              onChange={val => handleInputChange('f_s_view', val)}
               options={['Вид X', 'Вид Y']}
               isEdit={isEdit}
             />
@@ -105,7 +192,8 @@ const FloraPage = () => {
             <FieldInput
               title="Тип культуры"
               type="select"
-              value={currentFlora.f_s_culture_type}
+              value={isEdit ? editData.f_s_culture_type : currentFlora.f_s_culture_type}
+              onChange={val => handleInputChange('f_s_culture_type', val)}
               options={['Тип X', 'Тип Y']}
               isEdit={isEdit}
             />
@@ -118,42 +206,48 @@ const FloraPage = () => {
             <FieldInput
               title="Культурально-морфологические свойства"
               type="radio"
-              value={currentFlora.f_s_culture_props}
+              value={isEdit ? editData.f_s_culture_props : currentFlora.f_s_culture_props}
+              onChange={val => handleInputChange('f_s_culture_props', val)}
               options={['Да','Нет']}
               isEdit={isEdit}
             />
             <FieldInput
               title="Профиль ферментативной активности"
               type="radio"
-              value={currentFlora.f_s_enzyme_activity}
+              value={isEdit ? editData.f_s_enzyme_activity : currentFlora.f_s_enzyme_activity}
+              onChange={val => handleInputChange('f_s_enzyme_activity', val)}
               options={['Да','Нет']}
               isEdit={isEdit}
             />
             <FieldInput
               title="Антигенная структура"
               type="radio"
-              value={currentFlora.f_s_antigenic_structure}
+              value={isEdit ? editData.f_s_antigenic_structure : currentFlora.f_s_antigenic_structure}
+              onChange={val => handleInputChange('f_s_antigenic_structure', val)}
               options={['Да','Нет']}
               isEdit={isEdit}
             />
             <FieldInput
               title="Профиль а/м устойчивости"
               type="radio"
-              value={currentFlora.f_s_stability_profile}
+              value={isEdit ? editData.f_s_stability_profile : currentFlora.f_s_stability_profile}
+              onChange={val => handleInputChange('f_s_stability_profile', val)}
               options={['Да','Нет']}
               isEdit={isEdit}
             />
             <FieldInput
               title="Специфическая активность"
               type="radio"
-              value={currentFlora.f_s_specific_activity}
+              value={isEdit ? editData.f_s_specific_activity : currentFlora.f_s_specific_activity}
+              onChange={val => handleInputChange('f_s_specific_activity', val)}
               options={['Да','Нет']}
               isEdit={isEdit}
             />
             <FieldInput
               title="Иное (указать)"
               type="input"
-              value={currentFlora.f_s_other}
+              value={isEdit ? editData.f_s_other : currentFlora.f_s_other}
+              onChange={val => handleInputChange('f_s_other', val)}
               isEdit={isEdit}
             />
           </div>
@@ -163,17 +257,19 @@ const FloraPage = () => {
             <FieldInput
               title="16S рРНК"
               type="radio"
-              value={currentFlora.f_s_16s_rrna}
+              value={isEdit ? editData.f_s_16s_rrna : currentFlora.f_s_16s_rrna}
+              onChange={val => handleInputChange('f_s_16s_rrna', val)}
               options={['Да','Нет']}
               isEdit={isEdit}
             />
             <FieldInput
               title="Секвенирование"
               type="radio"
-              value={currentFlora.f_s_sequencing}
+              value={isEdit ? editData.f_s_sequencing : currentFlora.f_s_sequencing}
+              onChange={val => handleInputChange('f_s_sequencing', val)}
               options={['Да','Нет']}
               isEdit={isEdit}
-            />
+              />
           </div>
         </div>
       </div>
@@ -183,13 +279,18 @@ const FloraPage = () => {
         <div>
           {isEdit ? (
             <>
-              <button className={cls.blueBtn} onClick={() => setIsEdit(false)}>Отмена</button>
-              <button className={cls.blueBtn} onClick={() => { setIsEdit(false) }}>Сохранить</button>
+              <button className={cls.blueBtn} onClick={handleCancel}>Отмена</button>
+              <button className={cls.blueBtn} onClick={handleSave}>Сохранить</button>
             </>
           ) : (
             <button className={cls.blueBtn} onClick={() => setIsEdit(true)}>Редактировать</button>
           )}
-          <button className={cls.redBtn}>Удалить</button>
+          <button className={cls.redBtn} onClick={async () => {
+            if (window.confirm('Удалить запись?')) {
+              await frappe.deleteDoc('Cat Microflora', id)
+              window.history.back()
+            }
+          }}>Удалить</button>
         </div>
       </div>
     </div>
