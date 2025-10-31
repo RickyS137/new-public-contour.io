@@ -24,6 +24,27 @@ const DocumentsPage = () => {
     status: ''
   });
 
+  useEffect(() => {
+    frappe.getFieldOptions('Cat NPA Document','f_opt_kind').then(res => {
+      const kindSelect = document.getElementById('kind');
+      res?.options?.forEach(opt => {
+        const optionElement = document.createElement('option');
+        optionElement.value = opt;
+        optionElement.textContent = opt;
+        kindSelect.appendChild(optionElement);
+      });
+    })
+    frappe.getFieldOptions('Cat NPA Document','f_opt_status').then(res => {
+      const statusSelect = document.getElementById('status');
+      res?.options?.forEach(opt => {
+        const optionElement = document.createElement('option');
+        optionElement.value = opt;
+        optionElement.textContent = opt;
+        statusSelect.appendChild(optionElement);
+      });
+    })
+  },[])
+
   const fetchDocumentsData = async () => {
     try {
       const conditions = [];

@@ -9,7 +9,7 @@ const Footer = () => {
             <div className={cls.customContainer}>
             <div className={cls.footerInner}>
                 <div className={cls.logo}>
-                <Link to={'/'}><img src={logo} alt="logo"/></Link>
+                <Link to={'/main'}><img src={logo} alt="logo"/></Link>
                 </div>
                 <div>
                 <ul className={cls.footerPageLinks}>

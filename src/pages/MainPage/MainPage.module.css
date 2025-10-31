@@ -116,6 +116,8 @@
   .news {
     max-height: 430px;
     overflow: auto;
+    margin: 1rem 0;
+    width: 70%;
   }
 
   .newsButtonBlock {

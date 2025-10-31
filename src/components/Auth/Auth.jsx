@@ -4,6 +4,7 @@ import useAuthStore from 'store/auth.store';
 
 const Auth = () => {
   const { data, setUser, setPwd, setIsAuthenticated, setUserInfo } = useAuthStore();
+  const navigate = useAuthStore(state => state.navigate);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -13,10 +14,11 @@ const Auth = () => {
         pwd: data.pwd,
       });
       const logged = await frappe.getLoggedUser();
-
+      
       if (logged) {
         setIsAuthenticated(true);
         setUserInfo(logged || data.usr);
+        navigate('/main');
       } else {
         setIsAuthenticated(false);
         setUserInfo(null);

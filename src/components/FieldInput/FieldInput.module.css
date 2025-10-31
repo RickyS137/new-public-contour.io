@@ -26,3 +26,8 @@
   box-sizing: border-box;
   transition: border-color 0.2s, background 0.2s;
 }
+
+.required {
+  color: red;
+  margin-left: 2px;
+}

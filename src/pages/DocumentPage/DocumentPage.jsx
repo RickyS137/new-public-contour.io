@@ -4,12 +4,14 @@ import FieldInput from 'components/FieldInput/FieldInput'
 import useDocumentsStore from 'store/documents.store'
 import { frappe } from 'shared/frappeService'
 import { useNavigate, useParams } from 'react-router-dom'
+import useAuthStore from 'store/auth.store'
 
 const DocumentPage = () => {
   const [isEdit, setIsEdit] = useState(false)
   const { id } = useParams()
   const navigate = useNavigate()
   const { currentDocument, setCurrentDocument } = useDocumentsStore();
+  const { isAuthenticated } = useAuthStore();
 
   const [editData, setEditData] = useState({
     f_s_title: '',
@@ -96,7 +98,8 @@ const DocumentPage = () => {
             title="Принявший орган"
             value={isEdit ? editData.f_opt_author : currentDocument.f_opt_author}
             onChange={val => handleInputChange('f_opt_author', val)}
-            options={['Министерство экологии', 'Парламент', 'Правительство']}
+            doctype={'Cat NPA Document'}
+            fieldname={'f_opt_author'}
           />
 
           <FieldInput
@@ -158,20 +161,26 @@ const DocumentPage = () => {
       <div className={cls.documentControlPanel}>
         <button className={cls.blueBtn} onClick={() => navigate(-1)}>Вернуться</button>
         <div id="admin-controls">
-          {!isEdit ? (
-            <button className={cls.blueBtn} onClick={() => setIsEdit(true)}>Редактировать</button>
-          ) : (
-            <>
-              <button className={cls.blueBtn} onClick={handleCancel}>Отмена</button>
-              <button className={cls.blueBtn} onClick={handleSave}>Сохранить</button>
+          {
+            isAuthenticated && (
+              <>
+              {!isEdit ? (
+              <button className={cls.blueBtn} onClick={() => setIsEdit(true)}>Редактировать</button>
+            ) : (
+              <>
+                <button className={cls.blueBtn} onClick={handleCancel}>Отмена</button>
+                <button className={cls.blueBtn} onClick={handleSave}>Сохранить</button>
+              </>
+            )}
+            <button className={cls.redBtn} onClick={async () => {
+              if (window.confirm('Удалить документ?')) {
+                await frappe.deleteDoc('Cat NPA Document', id)
+                window.history.back()
+              }
+            }}>Удалить</button>
             </>
-          )}
-          <button className={cls.redBtn} onClick={async () => {
-            if (window.confirm('Удалить документ?')) {
-              await frappe.deleteDoc('Cat NPA Document', id)
-              window.history.back()
-            }
-          }}>Удалить</button>
+            )
+          }
         </div>
       </div>
     </>

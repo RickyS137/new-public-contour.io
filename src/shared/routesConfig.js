@@ -11,7 +11,7 @@ const { default: FloraPage } = require("pages/FloraPage/FloraPage");
 
 export const routesConfig = [
     {
-        path: '/',
+        path: '/main',
         element: <MainPage/>
     },
     {

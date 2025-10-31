@@ -13,13 +13,13 @@ const AuthPage = () => {
           <button
             className={cls.button}
           >
-            <NavLink to={'/'}>Главная</NavLink>
+            <NavLink to={'/main'}>Главная</NavLink>
           </button>
         </div>
       </header>
       <div className={cls.AuthContent}>
         <div className={cls.logo}>
-          <img src={logo} alt="" />
+          <img src={logo} alt="logo" />
         </div>
         <h2>Авторизация в систему</h2>
         <Auth/>

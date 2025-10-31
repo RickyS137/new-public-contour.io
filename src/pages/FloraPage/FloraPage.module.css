@@ -30,13 +30,6 @@
   margin-bottom: 0.7rem;
 }
 
-.floraField select {
-  height: 100%;
-  border: 1px solid #ccc;
-  padding: 8px 36px 8px 12px;
-  background: #fff;
-}
-
 .floraFieldname {
   font-size: 0.8rem;
 }

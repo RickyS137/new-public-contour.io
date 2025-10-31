@@ -37,10 +37,10 @@
   height: 44px;
   padding: 8px;
   border-radius: 12px;
-  background-color: #132675;;
+  background-color: #192345;
   color: #fff;
   cursor: pointer;
-  border-color: #192345;
+  border: none;
 }
 
 .header .pageLinks {

@@ -10,6 +10,46 @@ import { useNavigate } from 'react-router-dom'
 const MicrofloraPage = () => {
   const navigate = useNavigate();
 
+  useEffect(() => {
+    frappe.client.get('api/method/gisbb_public_contour.www.react_page.index.get_microflora_filters').then(res => {      
+      const inBookSelect = document.getElementById('f_s_organization');
+      res?.data?.message?.f_s_organizations?.forEach(opt => {
+        const optionElement = document.createElement('option');
+        optionElement.value = opt;
+        optionElement.textContent = opt;
+        inBookSelect.appendChild(optionElement);
+      });
+      const kindSelect = document.getElementById('f_s_kind');
+      res?.data?.message?.f_s_kinds?.forEach(opt => {
+        const optionElement = document.createElement('option');
+        optionElement.value = opt;
+        optionElement.textContent = opt;
+        kindSelect.appendChild(optionElement);
+      });
+      const viewSelect = document.getElementById('f_s_view');
+      res?.data?.message?.f_s_views?.forEach(opt => {
+        const optionElement = document.createElement('option');
+        optionElement.value = opt;
+        optionElement.textContent = opt;
+        viewSelect.appendChild(optionElement);
+      });
+      const cultureTypeSelect = document.getElementById('f_s_culture_type');
+      res?.data?.message?.f_s_culture_types?.forEach(opt => {
+        const optionElement = document.createElement('option');
+        optionElement.value = opt;
+        optionElement.textContent = opt;
+        cultureTypeSelect.appendChild(optionElement);
+      });
+      const objectOfSymbiosisSelect = document.getElementById('f_s_object_of_symbiosis');
+      res?.data?.message?.f_s_object_of_symbiosiss?.forEach(opt => {
+        const optionElement = document.createElement('option');
+        optionElement.value = opt;
+        optionElement.textContent = opt;
+        objectOfSymbiosisSelect.appendChild(optionElement);
+      });
+    })
+  },[])
+
   const { microflora, setMicroflora } = useMicrofloraStore()
   const [currentPage, setCurrentPage] = useState(1)
   const [totalMicroflora, setTotalMicroflora] = useState(0)
@@ -19,7 +59,7 @@ const MicrofloraPage = () => {
 
   const [filters, setFilters] = useState({
     search: '',
-    f_s_in_book: '',
+    f_s_organization: '',
     f_s_kind: '',
     f_s_view: '',
     f_s_culture_type: '',
@@ -30,7 +70,7 @@ const MicrofloraPage = () => {
     try {
       const conditions = [];
       if (filters.search) conditions.push(['f_s_name', 'like', `%${filters.search}%`]);
-      if (filters.f_s_in_book) conditions.push(['f_s_in_book', '=', filters.f_s_in_book]);
+      if (filters.f_s_organization) conditions.push(['f_s_organization', '=', filters.f_s_organization]);
       if (filters.f_s_kind) conditions.push(['f_s_kind', '=', filters.f_s_kind]);
       if (filters.f_s_view) conditions.push(['f_s_view', '=', filters.f_s_view]);
       if (filters.f_s_culture_type) conditions.push(['f_s_culture_type', '=', filters.f_s_culture_type]);
@@ -81,7 +121,7 @@ const MicrofloraPage = () => {
         </sup>
       </h2>
       <p className={cls.subtitle}>
-        Каталог ведется в соответствии с постановлением Правительства РФ от 16 апреля 2022 г. № 676 «Об утверждении Правил формирования, сохранения и развития государственной коллекции представителей нормальной микрофлоры человека, сельскохозяйственных животных и растений, а также криогенных банков образцов природных нормальных микробиоценозов (биоматериалов)» и на данный момент содержит 12707 записей 
+        Каталог ведется в соответствии с постановлением Правительства РФ от 16 апреля 2022 г. № 676 «Об утверждении Правил формирования, сохранения и развития государственной коллекции представителей нормальной микрофлоры человека, сельскохозяйственных животных и растений, а также криогенных банков образцов природных нормальных микробиоценозов (биоматериалов)» и на данный момент содержит {totalMicroflora} записей 
       </p>
       <div>
         <div className={cls.searchContainer}>
@@ -91,7 +131,7 @@ const MicrofloraPage = () => {
                 type="text" 
                 name="search" 
                 id="search" 
-                placeholder="Поиск по наименованию" 
+                placeholder="Поиск по наименованию"
                 className={cls.searchInput}
                 value={filters.search}
                 onChange={handleFilterChange}
@@ -101,13 +141,13 @@ const MicrofloraPage = () => {
             </div>
             <div className={cls.microfloraSelects}>
               <select 
-                name="f_s_in_book" 
-                id="f_s_in_book" 
+                name="f_s_organization" 
+                id="f_s_organization" 
                 className={cls.filterSelect}
-                value={filters.f_s_in_book}
+                value={filters.f_s_organization}
                 onChange={handleFilterChange}
               >
-                <option value="">Все типы</option>
+                <option value="">Все организации</option>
               </select>
               <select 
                 name="f_s_kind" 

@@ -69,7 +69,7 @@ const Header = () => {
                 <div className={cls.headerInner}>
                     <div>
                         <div className={cls.logo}>
-                            <Link to={"/"}><img src={logo} alt="logo"/></Link>
+                            <Link to={"/main"}><img src={logo} alt="logo"/></Link>
                         </div>
                     </div>
                     <nav>

@@ -4,16 +4,34 @@ import { useNavigate, useParams } from 'react-router-dom'
 import FieldInput from 'components/FieldInput/FieldInput'
 import { frappe } from 'shared/frappeService'
 import useMicrofloraStore from 'store/microflora.store'
+import useAuthStore from 'store/auth.store'
 
 const FloraPage = () => {
   const { id } = useParams()
 
   const navigate = useNavigate()
 
-  const { currentFlora, setCurrentFlora } = useMicrofloraStore() 
+  const { currentFlora, setCurrentFlora } = useMicrofloraStore()
+  const { isAuthenticated } = useAuthStore();
+  const [ floraOptions, setFloraOptions ] = useState({
+    f_s_organizations: [],
+    f_s_kinds: [],
+    f_s_views: [],
+    f_s_culture_types: [],
+    f_s_object_of_symbiosiss: []
+  })
 
   useEffect(() => {
     frappe.getDoc('Cat Microflora', id).then(res => setCurrentFlora(res))
+    frappe.client.get('api/method/gisbb_public_contour.www.react_page.get_microflora_filters').then(res => { 
+      setFloraOptions({
+        f_s_organizations: res?.data?.message?.f_s_organizations || [],
+        f_s_kinds: res?.data?.message?.f_s_kinds || [],
+        f_s_views: res?.data?.message?.f_s_views || [],
+        f_s_culture_types: res?.data?.message?.f_s_culture_types || [],
+        f_s_object_of_symbiosiss: res?.data?.message?.f_s_object_of_symbiosiss || []
+      })
+    })
   },[ id, setCurrentFlora ])
 
   
@@ -116,13 +134,15 @@ const FloraPage = () => {
               type="input"
               value={isEdit ? editData.f_s_organization : currentFlora.f_s_organization}
               onChange={val => handleInputChange('f_s_organization', val)}
+              doctype={'Cat Microflora'}
+              options={floraOptions.f_s_organizations}
               isEdit={isEdit}
             />
           </div>
           <div className={cls.floraField}>
             <FieldInput
               title="Дата создания"
-              type="input"
+              type="date"
               value={isEdit ? editData.creationDate : currentFlora.creationDate}
               onChange={val => handleInputChange('creationDate', val)}
               isEdit={isEdit}
@@ -148,7 +168,8 @@ const FloraPage = () => {
               type="select"
               value={isEdit ? editData.f_s_in_book : currentFlora.f_s_in_book}
               onChange={val => handleInputChange('f_s_in_book', val)}
-              options={['Отдел A', 'Отдел B']}
+              doctype={'Cat Microflora'}
+              options={floraOptions.f_s_organizations}
               isEdit={isEdit}
               />
           </div>
@@ -161,7 +182,8 @@ const FloraPage = () => {
               type="select"
               value={isEdit ? editData.f_s_kind : currentFlora.f_s_kind}
               onChange={val => handleInputChange('f_s_kind', val)}
-              options={['Род A', 'Род B']}
+              doctype={'Cat Microflora'}
+              options={floraOptions.f_s_kinds}
               isEdit={isEdit}
             />
           </div>
@@ -171,7 +193,8 @@ const FloraPage = () => {
               type="select"
               value={isEdit ? editData.f_s_object_of_symbiosis : currentFlora.f_s_object_of_symbiosis}
               onChange={val => handleInputChange('f_s_object_of_symbiosis', val)}
-              options={['Организм X', 'Организм Y']}
+              doctype={'Cat Microflora'}
+              options={floraOptions.f_s_object_of_symbiosiss}
               isEdit={isEdit}
             />
           </div>
@@ -184,7 +207,8 @@ const FloraPage = () => {
               type="select"
               value={isEdit ? editData.f_s_view : currentFlora.f_s_view}
               onChange={val => handleInputChange('f_s_view', val)}
-              options={['Вид X', 'Вид Y']}
+              doctype={'Cat Microflora'}
+              options={floraOptions.f_s_views}
               isEdit={isEdit}
             />
           </div>
@@ -194,7 +218,8 @@ const FloraPage = () => {
               type="select"
               value={isEdit ? editData.f_s_culture_type : currentFlora.f_s_culture_type}
               onChange={val => handleInputChange('f_s_culture_type', val)}
-              options={['Тип X', 'Тип Y']}
+              doctype={'Cat Microflora'}
+              options={floraOptions.f_s_culture_types}
               isEdit={isEdit}
             />
           </div>
@@ -277,20 +302,26 @@ const FloraPage = () => {
       <div className={cls.floraControlPanel}>
         <button className={cls.blueBtn} onClick={() => navigate(-1)}>Вернуться</button>
         <div>
-          {isEdit ? (
-            <>
-              <button className={cls.blueBtn} onClick={handleCancel}>Отмена</button>
-              <button className={cls.blueBtn} onClick={handleSave}>Сохранить</button>
-            </>
-          ) : (
-            <button className={cls.blueBtn} onClick={() => setIsEdit(true)}>Редактировать</button>
-          )}
-          <button className={cls.redBtn} onClick={async () => {
-            if (window.confirm('Удалить запись?')) {
-              await frappe.deleteDoc('Cat Microflora', id)
-              window.history.back()
-            }
-          }}>Удалить</button>
+          {
+            isAuthenticated ? (
+              <>
+                  {isEdit ? (
+                <>
+                  <button className={cls.blueBtn} onClick={handleCancel}>Отмена</button>
+                  <button className={cls.blueBtn} onClick={handleSave}>Сохранить</button>
+                </>
+              ) : (
+                <button className={cls.blueBtn} onClick={() => setIsEdit(true)}>Редактировать</button>
+              )}
+              <button className={cls.redBtn} onClick={async () => {
+                if (window.confirm('Удалить запись?')) {
+                  await frappe.deleteDoc('Cat Microflora', id)
+                  window.history.back()
+                }
+              }}>Удалить</button>
+              </>
+            ) : null
+          }
         </div>
       </div>
     </div>
