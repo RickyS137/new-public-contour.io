@@ -1,10 +1,11 @@
 import { frappe } from 'shared/frappeService';
+import { useNavigate } from 'react-router-dom';
 import cls from './Auth.module.css';
 import useAuthStore from 'store/auth.store';
 
 const Auth = () => {
   const { data, setUser, setPwd, setIsAuthenticated, setUserInfo } = useAuthStore();
-  const navigate = useAuthStore(state => state.navigate);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();

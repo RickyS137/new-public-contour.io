@@ -11,7 +11,7 @@ const MicrofloraPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    frappe.client.get('api/method/gisbb_public_contour.www.react_page.index.get_microflora_filters').then(res => {      
+    frappe.client.get('api/method/gisbb_public_contour.www.public.index.get_microflora_filters').then(res => {      
       const inBookSelect = document.getElementById('f_s_organization');
       res?.data?.message?.f_s_organizations?.forEach(opt => {
         const optionElement = document.createElement('option');

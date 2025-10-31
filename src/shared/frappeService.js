@@ -13,6 +13,8 @@ class FrappeService {
         : {},
       withCredentials: true,
     });
+    this._sessionRefreshIntervalId = null;
+    this._setupInterceptors();
   }
 
   setAuthToken(token) {
@@ -23,6 +25,65 @@ class FrappeService {
     } else {
       delete this.client.defaults.headers['Authorization'];
       try { localStorage.removeItem('frappe_token'); } catch (e) {}
+    }
+  }
+
+  _setupInterceptors() {
+    // Interceptor to try refreshing session on 401 and retry the original request once
+    this.client.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        const originalRequest = error.config;
+        if (!originalRequest) return Promise.reject(error);
+
+        const status = error.response?.status;
+        if (status === 401 && !originalRequest._retry) {
+          originalRequest._retry = true;
+          const refreshed = await this.refreshSession();
+          if (refreshed) {
+            // retry original request with same config
+            return this.client(originalRequest);
+          }
+        }
+
+        return Promise.reject(error);
+      }
+    );
+  }
+
+  /**
+   * Refreshes the session by hitting a lightweight authenticated endpoint.
+   * Returns true if user is still logged in (and cookie refreshed), false otherwise.
+   */
+  async refreshSession() {
+    try {
+      const resp = await this.client.get('/api/method/frappe.auth.get_logged_user');
+      return !!(resp.data && resp.data.message);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /**
+   * Start periodic session refresh. Interval defaults to 5 minutes.
+   */
+  startSessionRefresh(intervalMs = 5 * 60 * 1000) {
+    try {
+      if (this._sessionRefreshIntervalId) return;
+      // run immediately once, then schedule
+      this.refreshSession().catch(() => {});
+      this._sessionRefreshIntervalId = setInterval(() => {
+        this.refreshSession().catch(() => {});
+      }, intervalMs);
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  stopSessionRefresh() {
+    if (this._sessionRefreshIntervalId) {
+      clearInterval(this._sessionRefreshIntervalId);
+      this._sessionRefreshIntervalId = null;
     }
   }
 
@@ -98,7 +159,7 @@ class FrappeService {
 
   async getFieldOptions(doctype, fieldname) {
     try {
-      const response = await this.client.get('/api/method/gisbb_public_contour.www.react_page.index.get_field_options', {
+      const response = await this.client.get('/api/method/gisbb_public_contour.www.public.index.get_field_options', {
         params: { 
           doctype: doctype,
           fieldname: fieldname 

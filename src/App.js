@@ -23,7 +23,7 @@ function AppLayout() {
 
 function App() {
   return (
-    <BrowserRouter basename="/react_page">
+    <BrowserRouter basename="/public">
       <AppLayout />
     </BrowserRouter>
   );

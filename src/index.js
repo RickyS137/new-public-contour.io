@@ -8,6 +8,6 @@ if (!window.location.pathname.startsWith('/login')) {
   root.render(<App />);
   
   if (window.location.pathname === '/') {
-    window.history.replaceState(null, '', '/react_page/main');
+    window.history.replaceState(null, '', '/public/main');
   }
 }
