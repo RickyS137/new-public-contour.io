@@ -1,9 +1,9 @@
 import Form from 'components/Form/Form'
-import React from 'react'
+import cls from './FormPage.module.css'
 
 const FormPage = () => {
   return (
-    <div>
+    <div className={cls.formPage}>
       <Form/>
     </div>
   )

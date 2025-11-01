@@ -73,6 +73,7 @@ const NewPage = () => {
           <FieldInput
             isEdit={isEdit}
             type="input"
+            title={"Заголовок"}
             value={isEdit ? editData.f_s_title : currentNew.f_s_title}
             onChange={val => handleInputChange('f_s_title', val)}
           />
@@ -82,6 +83,7 @@ const NewPage = () => {
           <FieldInput
             isEdit={isEdit}
             type="textarea"
+            title={"Описание"}
             value={isEdit ? editData.f_s_content : currentNew.f_s_content}
             onChange={val => handleInputChange('f_s_content', val)}
           />
