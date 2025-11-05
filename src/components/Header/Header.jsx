@@ -5,6 +5,7 @@ import { useState } from 'react';
 import useMediaQuery from 'shared/useMediaQuery';
 import AuthModalMobile from 'components/AuthModalMobile/AuthModalMobile';
 import useAuthStore from 'store/auth.store';
+import { toast } from 'react-toastify';
 
 const Header = () => {
     const [open, setOpen] = useState(false);
@@ -69,7 +70,12 @@ const Header = () => {
     const handleAuthClick = () => {
         if (isAuth) {
             // If authenticated, logout
-            try { logout(); } catch (e) { console.error(e); }
+            try { 
+                logout();
+                toast.success('Вы успешно вышли из системы');
+             } catch (e) {
+                console.error(e); 
+            }
             navigate('/main');
             return;
         }

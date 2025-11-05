@@ -2,6 +2,7 @@ import { Route, Routes, BrowserRouter, useLocation } from 'react-router-dom';
 import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
 import { routesConfig } from 'shared/routesConfig';
+import { ToastContainer } from 'react-toastify';
 
 function AppLayout() {
   const location = useLocation();
@@ -25,6 +26,7 @@ function App() {
   return (
     <BrowserRouter basename="/public">
       <AppLayout />
+      <ToastContainer position='bottom-right'/>
     </BrowserRouter>
   );
 }

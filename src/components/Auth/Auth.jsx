@@ -2,6 +2,7 @@ import { frappe } from 'shared/frappeService';
 import { useNavigate } from 'react-router-dom';
 import cls from './Auth.module.css';
 import useAuthStore from 'store/auth.store';
+import { toast } from 'react-toastify';
 
 const Auth = () => {
   const { data, setUser, setPwd, setIsAuthenticated, setUserInfo } = useAuthStore();
@@ -20,15 +21,17 @@ const Auth = () => {
         setIsAuthenticated(true);
         setUserInfo(logged || data.usr);
         navigate('/main');
+        toast.success('Успешный вход в систему');
       } else {
         setIsAuthenticated(false);
         setUserInfo(null);
+        toast.error('Не удалось получить информацию о пользователе после входа');
       }
       
     } catch (error) {
       setIsAuthenticated(false);
       setUserInfo(null);
-      alert('Ошибка входа: ' + (error?.response?.data?.message || error.message));
+      toast.error('Ошибка при попытке входа: ' + (error.response?.data?.message || error.message));
     }
   }
 
