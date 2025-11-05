@@ -1,10 +1,11 @@
 import DocumentsCard from 'components/cards/DocumentsCard'
 import cls from './DocumentsPage.module.css'
 import useDocumentsStore from 'store/documents.store';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { frappe } from 'shared/frappeService';
 import Pagination from 'components/Pagination/Pagination';
 import { useNavigate } from 'react-router-dom';
+import LoadingState from 'components/LoadingState/LoadingState';
 
 
 const DocumentsPage = () => {
@@ -12,6 +13,7 @@ const DocumentsPage = () => {
   const { documents, setDocuments } = useDocumentsStore();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalDocuments, setTotalDocuments] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const pageSize = 20;
   const startIndex = (currentPage - 1) * pageSize;
   const visibleDocuments = documents;
@@ -45,7 +47,8 @@ const DocumentsPage = () => {
     })
   },[])
 
-  const fetchDocumentsData = async () => {
+  const fetchDocumentsData = useCallback(async () => {
+    setIsLoading(true);
     try {
       const conditions = [];
       if (filters.search) conditions.push(['f_s_title', 'like', `%${filters.search}%`]);
@@ -70,8 +73,10 @@ const DocumentsPage = () => {
       setTotalDocuments(totalFiltered.length);
     } catch (error) {
       console.error('Error fetching documents:', error);
+    } finally {
+      setIsLoading(false);
     }
-  };
+  }, [filters, startIndex, pageSize, setDocuments]);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -86,7 +91,7 @@ const DocumentsPage = () => {
 
   useEffect(() => {
     fetchDocumentsData();
-  }, [currentPage]);
+  }, [currentPage, fetchDocumentsData]);
   
   return (
     <div className={cls.documentList}>
@@ -158,11 +163,13 @@ const DocumentsPage = () => {
       </div>
     </div>
     <div className={cls.documentItems}>
-      {
+      {isLoading ? (
+        <LoadingState />
+      ) : (
         visibleDocuments.map((item, i) => (
           <DocumentsCard document={item} key={startIndex + i}/>
         ))
-      }
+      )}
     </div>
     <Pagination totalItems={totalDocuments} pageSize={pageSize} currentPage={currentPage} onPageChange={setCurrentPage} />
   </div>

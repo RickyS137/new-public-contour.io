@@ -1,10 +1,11 @@
 import NewsCard from 'components/cards/NewsCard'
 import cls from './NewsPage.module.css'
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { frappe } from 'shared/frappeService';
 import useNewsStore from 'store/news.store';
 import Pagination from 'components/Pagination/Pagination'
+import LoadingState from 'components/LoadingState/LoadingState'
 
 // use shared frappe instance
 
@@ -14,6 +15,7 @@ const NewsPage = () => {
   const { news, setNews } = useNewsStore();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalNews, setTotalNews] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const pageSize = 10;
   const startIndex = (currentPage - 1) * pageSize;
   const visibleNews = news;
@@ -24,7 +26,8 @@ const NewsPage = () => {
     date_to: ''
   });
 
-  const fetchNewsData = async () => {
+  const fetchNewsData = useCallback(async () => {
+    setIsLoading(true);
     try {
       // Формируем условия фильтрации
       const conditions = [];
@@ -48,8 +51,10 @@ const NewsPage = () => {
       setTotalNews(totalFiltered.length);
     } catch (error) {
       console.error('Error fetching news:', error);
+    } finally {
+      setIsLoading(false);
     }
-  };
+  }, [filters, startIndex, pageSize, setNews]);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -64,7 +69,7 @@ const NewsPage = () => {
 
   useEffect(() => {
     fetchNewsData();
-  }, [currentPage]);
+  }, [currentPage, fetchNewsData]);
 
   return (
     <div className={cls.news}>
@@ -114,15 +119,19 @@ const NewsPage = () => {
         </div>    
         </div>
         <div className={cls.newsList}>
-          <div className={cls.newsHeader}>
-            <span>Заголовок</span>
-            <span>Дата размещения</span>
-          </div>
-          {
-            visibleNews && visibleNews.map((item, i) => (
-              <NewsCard news={item} key={startIndex + i}/>
-            ))
-          }
+          {isLoading ? (
+            <LoadingState />
+          ) : (
+            <>
+              <div className={cls.newsHeader}>
+                <span>Заголовок</span>
+                <span>Дата размещения</span>
+              </div>
+              {visibleNews && visibleNews.map((item, i) => (
+                <NewsCard news={item} key={startIndex + i}/>
+              ))}
+            </>
+          )}
         </div>
         <Pagination totalItems={totalNews} pageSize={pageSize} currentPage={currentPage} onPageChange={setCurrentPage} />
     </div>

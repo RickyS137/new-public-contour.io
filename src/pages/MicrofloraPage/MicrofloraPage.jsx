@@ -2,9 +2,10 @@ import MicrofloraCard from 'components/cards/MicrofloraCard'
 import cls from './MicrofloraPage.module.css'
 import { frappe } from 'shared/frappeService'
 import useMicrofloraStore from 'store/microflora.store'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Pagination from 'components/Pagination/Pagination'
 import { useNavigate } from 'react-router-dom'
+import LoadingState from 'components/LoadingState/LoadingState'
 
 
 const MicrofloraPage = () => {
@@ -53,6 +54,7 @@ const MicrofloraPage = () => {
   const { microflora, setMicroflora } = useMicrofloraStore()
   const [currentPage, setCurrentPage] = useState(1)
   const [totalMicroflora, setTotalMicroflora] = useState(0)
+  const [isLoading, setIsLoading] = useState(false)
   const pageSize = 20
   const startIndex = (currentPage - 1) * pageSize
   const visibleMicroflora = microflora
@@ -66,7 +68,8 @@ const MicrofloraPage = () => {
     f_s_object_of_symbiosis: ''
   });
 
-  const fetchMicrofloraData = async (filters) => {
+  const fetchMicrofloraData = useCallback(async (filters) => {
+    setIsLoading(true);
     try {
       const conditions = [];
       if (filters.search) conditions.push(['f_s_name', 'like', `%${filters.search}%`]);
@@ -92,8 +95,10 @@ const MicrofloraPage = () => {
       setTotalMicroflora(totalFiltered.length);
     } catch (error) {
       console.error('Error fetching data:', error);
+    } finally {
+      setIsLoading(false);
     }
-  };
+  }, [setMicroflora]);
 
   
 
@@ -110,7 +115,7 @@ const MicrofloraPage = () => {
 
   useEffect(() => {
     fetchMicrofloraData(filters);
-  }, [currentPage, startIndex]);
+  }, [currentPage, fetchMicrofloraData, filters]);
 
   return (
     <div className={cls.microfloraList}>
@@ -217,13 +222,15 @@ const MicrofloraPage = () => {
           </tr>
         </thead>
         <tbody className={cls.floraItems}>
-          {
+          {isLoading ? (
+            <tr><td colSpan={16}><LoadingState /></td></tr>
+          ) : (
             microflora.length
             ? visibleMicroflora.map((item, i) => (
               <MicrofloraCard flora={item} key={startIndex + i}/>
             ))
             : <tr><td className={cls.emptyPage} colSpan={16}>Документы не найдены.</td></tr>
-          }
+          )}
         </tbody>
       </table>
     </div>

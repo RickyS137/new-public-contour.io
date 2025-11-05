@@ -5,6 +5,10 @@
   line-height: 1.7;
 }
 
+.label {
+  margin-bottom: 6px;
+}
+
 .fieldName {
   color: #525252;
   font-size: 13px;
