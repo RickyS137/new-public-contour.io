@@ -29,7 +29,7 @@ const MicrofloraCard = ({ flora }) => {
         <td>{f_s_view || 'Не указано'}</td>
         <td>{name || 'Не указано'}</td>
         <td>{f_s_culture_type || 'Не указано'}</td>
-        <td>{f_s_culture_type || 'Не указано'}</td>
+        <td>{f_s_culture_props || 'Не указано'}</td>
         <td>{f_s_enzyme_activity || 'Не указано'}</td>
         <td>{f_s_antigenic_structure || 'Не указано'}</td>
         <td>{f_s_stability_profile || 'Не указано'}</td>

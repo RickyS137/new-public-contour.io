@@ -6,6 +6,7 @@ import { frappe } from 'shared/frappeService';
 import Pagination from 'components/Pagination/Pagination';
 import { useNavigate } from 'react-router-dom';
 import LoadingState from 'components/LoadingState/LoadingState';
+import useAuthStore from 'store/auth.store';
 
 
 const DocumentsPage = () => {
@@ -14,6 +15,7 @@ const DocumentsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalDocuments, setTotalDocuments] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const { isAuthenticated } = useAuthStore()
   const pageSize = 20;
   const startIndex = (currentPage - 1) * pageSize;
   const visibleDocuments = documents;
@@ -115,7 +117,9 @@ const DocumentsPage = () => {
               onChange={handleFilterChange}
             />
             <button type="submit" className={cls.searchButton}>Найти</button>
+            {isAuthenticated && (
             <button type="button" className={cls.addButton} onClick={() => navigate('/open-form/document')}>Добавить</button>
+            )}
           </div>
           <div className={cls.filterDataInputs}>
             <div className={cls.filterInputs}>

@@ -91,12 +91,37 @@ class FrappeService {
     this.authToken = null;
     delete this.client.defaults.headers['Authorization'];
     try { localStorage.removeItem('frappe_token'); } catch (e) {}
+
+    try { this.stopSessionRefresh(); } catch (e) {}
+
+    try {
+      this.client.get('/api/method/logout').catch(() => {});
+    } catch (e) {}
+
+    try {
+      if (typeof document !== 'undefined' && document.cookie) {
+        const cookies = document.cookie.split(';').map(c => c.split('=')[0].trim()).filter(Boolean);
+        const expire = 'Thu, 01 Jan 1970 00:00:00 GMT';
+        const path = 'Path=/;';
+        const domain = typeof window !== 'undefined' ? `Domain=${window.location.hostname};` : '';
+        cookies.forEach(name => {
+          try {
+            document.cookie = `${name}=; ${path} Expires=${expire};`;
+            if (domain) document.cookie = `${name}=; ${path} ${domain} Expires=${expire};`;
+          } catch (e) {}
+        });
+      }
+    } catch (e) {
+      // ignore cookie deletion errors
+    }
   }
 
   async getLoggedUser() {
     try {
       const resp = await this.client.get('/api/method/frappe.auth.get_logged_user');
-      return resp.data?.message || null;
+      console.log(resp);
+      const booleanUser = !!(resp.data?.message !== 'Guest');
+      return booleanUser
     } catch (e) {
       return null;
     }
@@ -209,6 +234,38 @@ class FrappeService {
         success: false,
         error: errorMessage
       };
+    }
+  }
+
+  async getMicrofloraCount(filters = {}) {
+    try {
+      const response = await this.client.get('/api/method/gisbb_public_contour.www.public.index.get_microflora_count', {
+        params: {
+          filters: JSON.stringify(filters)
+        }
+      });
+
+      return response.data?.message?.total_flora ?? null;
+    } catch (error) {
+      console.error('Error fetching microflora count:', error);
+      return null;
+    }
+  }
+
+  async getMicroflora(filters = {}, page = 1, page_length = 20) {
+    try {
+      const response = await this.client.get('/api/method/gisbb_public_contour.www.public.index.get_microflora', {
+        params: {
+          filters: JSON.stringify(filters),
+          page,
+          page_length
+        }
+      });
+
+      return response.data?.message?.flora ?? [];
+    } catch (error) {
+      console.error('Error fetching microflora list:', error);
+      return [];
     }
   }
 

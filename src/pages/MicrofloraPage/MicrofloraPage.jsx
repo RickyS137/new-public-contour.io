@@ -6,6 +6,7 @@ import { useState, useEffect, useCallback } from 'react'
 import Pagination from 'components/Pagination/Pagination'
 import { useNavigate } from 'react-router-dom'
 import LoadingState from 'components/LoadingState/LoadingState'
+import useAuthStore from 'store/auth.store'
 
 
 const MicrofloraPage = () => {
@@ -55,6 +56,7 @@ const MicrofloraPage = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [totalMicroflora, setTotalMicroflora] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
+  const { isAuthenticated } = useAuthStore()
   const pageSize = 20
   const startIndex = (currentPage - 1) * pageSize
   const visibleMicroflora = microflora
@@ -68,40 +70,34 @@ const MicrofloraPage = () => {
     f_s_object_of_symbiosis: ''
   });
 
-  const fetchMicrofloraData = useCallback(async (filters) => {
+const fetchMicrofloraData = useCallback(async (filtersPayload = {}, page = 1) => {
     setIsLoading(true);
     try {
-      const conditions = [];
-      if (filters.search) conditions.push(['f_s_name', 'like', `%${filters.search}%`]);
-      if (filters.f_s_organization) conditions.push(['f_s_organization', '=', filters.f_s_organization]);
-      if (filters.f_s_kind) conditions.push(['f_s_kind', '=', filters.f_s_kind]);
-      if (filters.f_s_view) conditions.push(['f_s_view', '=', filters.f_s_view]);
-      if (filters.f_s_culture_type) conditions.push(['f_s_culture_type', '=', filters.f_s_culture_type]);
-      if (filters.f_s_object_of_symbiosis) conditions.push(['f_s_object_of_symbiosis', '=', filters.f_s_object_of_symbiosis]);
+      const data = await frappe.getMicroflora(filtersPayload, Number(page), Number(pageSize));
+      
+      if (data && data.flora) {
+        setMicroflora(Array.isArray(data.flora) ? data.flora : []);
+      } else {
+        setMicroflora([]);
+      }
 
-      const filteredData = await frappe.getList('Cat Microflora', {
-        start: startIndex,
-        page_length: pageSize,
-        fields: ["f_s_number","f_s_in_book", "f_s_kind", "f_s_view", "f_s_name", "f_s_culture_type", "f_s_culture_props", "f_s_enzyme_activity", "f_s_antigenic_structure", "f_s_stability_profile", "f_s_specific_activity", "f_s_other", "f_s_16s_rrna", "f_s_sequencing", "f_s_organization", "f_s_object_of_symbiosis", "f_s_note", "name"],
-        filters: conditions
-      });
-      setMicroflora(filteredData);
-
-      const totalFiltered = await frappe.getList('Cat Microflora', {
-        fields: ["name"],
-        limit: 0,
-        filters: conditions
-      });
-      setTotalMicroflora(totalFiltered.length);
+      try {
+        const countData = await frappe.getMicrofloraCount(filtersPayload);
+        if (countData && typeof countData.total_flora === 'number') {
+          setTotalMicroflora(countData.total_flora);
+        }
+      } catch (err) {
+        console.error('Error getting microflora total count:', err);
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
+      setMicroflora([]);
+      setTotalMicroflora(0);
     } finally {
       setIsLoading(false);
     }
-  }, [setMicroflora]);
-
+  }, [setMicroflora, pageSize]);
   
-
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters(prev => ({ ...prev, [name]: value }));
@@ -110,11 +106,12 @@ const MicrofloraPage = () => {
 
   const handleFilterSubmit = (e) => {
     e.preventDefault();
-    fetchMicrofloraData(filters);
+    setCurrentPage(1);
+    fetchMicrofloraData(filters, 1);
   };
 
   useEffect(() => {
-    fetchMicrofloraData(filters);
+    fetchMicrofloraData(filters, currentPage);
   }, [currentPage, fetchMicrofloraData, filters]);
 
   return (
@@ -122,7 +119,7 @@ const MicrofloraPage = () => {
       <h2 className={cls.pageTitle}>
         Единый каталог государственной коллекции<br/> представителей нормальной микрофлоры
         <sup>
-          <span id="total-flora">{totalMicroflora}</span>
+          <span id="total-flora">{microflora.length}</span>
         </sup>
       </h2>
       <p className={cls.subtitle}>
@@ -142,7 +139,11 @@ const MicrofloraPage = () => {
                 onChange={handleFilterChange}
               />
               <button type="submit" className={cls.searchButton}>Найти</button>
-              <button type="button" className={cls.addButton} onClick={() => navigate('/open-form/flora')}>Добавить</button>
+              {
+                isAuthenticated && (
+                  <button type="button" className={cls.addButton} onClick={() => navigate('/open-form/flora')}>Добавить</button>
+                )
+              }
             </div>
             <div className={cls.microfloraSelects}>
               <select 

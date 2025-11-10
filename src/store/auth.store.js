@@ -34,10 +34,6 @@ const useAuthStore = create((set, get) => ({
         },
 }));
 
-// Initialize authentication state on startup.
-// We check both local token and server-side cookie session (via getLoggedUser).
-// This ensures `isAuthenticated` is true when the backend session cookie exists
-// even if no token is stored in localStorage.
 (async function initAuth() {
     if (initialToken) {
         try { frappe.setAuthToken(initialToken); } catch (e) {}
