@@ -119,7 +119,6 @@ class FrappeService {
   async getLoggedUser() {
     try {
       const resp = await this.client.get('/api/method/frappe.auth.get_logged_user');
-      console.log(resp);
       const booleanUser = !!(resp.data?.message !== 'Guest');
       return booleanUser
     } catch (e) {
@@ -237,14 +236,9 @@ class FrappeService {
     }
   }
 
-  async getMicrofloraCount(filters = {}) {
+  async getMicrofloraCount() {
     try {
-      const response = await this.client.get('/api/method/gisbb_public_contour.www.public.index.get_microflora_count', {
-        params: {
-          filters: JSON.stringify(filters)
-        }
-      });
-
+      const response = await this.client.get('/api/method/gisbb_public_contour.www.public.index.get_microflora_count');      
       return response.data?.message?.total_flora ?? null;
     } catch (error) {
       console.error('Error fetching microflora count:', error);
@@ -261,11 +255,13 @@ class FrappeService {
           page_length
         }
       });
+      console.log(response);
+      
 
-      return response.data?.message?.flora ?? [];
+      return response.data?.message ?? {};
     } catch (error) {
       console.error('Error fetching microflora list:', error);
-      return [];
+      return { flora: [], total_count: 0};
     }
   }
 

@@ -55,14 +55,14 @@ const MicrofloraPage = () => {
   const { microflora, setMicroflora } = useMicrofloraStore()
   const [currentPage, setCurrentPage] = useState(1)
   const [totalMicroflora, setTotalMicroflora] = useState(0)
+  const [totalSearchMicroflora, setTotalSearchMicroflora] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
   const { isAuthenticated } = useAuthStore()
   const pageSize = 20
   const startIndex = (currentPage - 1) * pageSize
-  const visibleMicroflora = microflora
 
   const [filters, setFilters] = useState({
-    search: '',
+    f_s_name: '',
     f_s_organization: '',
     f_s_kind: '',
     f_s_view: '',
@@ -73,18 +73,22 @@ const MicrofloraPage = () => {
 const fetchMicrofloraData = useCallback(async (filtersPayload = {}, page = 1) => {
     setIsLoading(true);
     try {
-      const data = await frappe.getMicroflora(filtersPayload, Number(page), Number(pageSize));
+      const data = await frappe.getMicroflora(filtersPayload, Number(page), Number(pageSize));      
       
       if (data && data.flora) {
-        setMicroflora(Array.isArray(data.flora) ? data.flora : []);
+        setMicroflora(data.flora);
       } else {
         setMicroflora([]);
       }
 
+      if (data && data.total_count !== undefined) {
+        setTotalSearchMicroflora(data.total_count);
+      }
+
       try {
-        const countData = await frappe.getMicrofloraCount(filtersPayload);
-        if (countData && typeof countData.total_flora === 'number') {
-          setTotalMicroflora(countData.total_flora);
+        const countData = await frappe.getMicrofloraCount();
+        if (countData) {
+          setTotalMicroflora(countData);
         }
       } catch (err) {
         console.error('Error getting microflora total count:', err);
@@ -110,6 +114,20 @@ const fetchMicrofloraData = useCallback(async (filtersPayload = {}, page = 1) =>
     fetchMicrofloraData(filters, 1);
   };
 
+  const handleClearFilters = (e) => {
+    e.preventDefault();
+    setFilters({
+      f_s_name: '',
+      f_s_organization: '',
+      f_s_kind: '',
+      f_s_view: '',
+      f_s_culture_type: '',
+      f_s_object_of_symbiosis: ''
+    });
+    setCurrentPage(1);
+    fetchMicrofloraData({}, 1);
+  }
+
   useEffect(() => {
     fetchMicrofloraData(filters, currentPage);
   }, [currentPage, fetchMicrofloraData, filters]);
@@ -119,7 +137,7 @@ const fetchMicrofloraData = useCallback(async (filtersPayload = {}, page = 1) =>
       <h2 className={cls.pageTitle}>
         Единый каталог государственной коллекции<br/> представителей нормальной микрофлоры
         <sup>
-          <span id="total-flora">{microflora.length}</span>
+          <span id="total-flora">{totalSearchMicroflora}</span>
         </sup>
       </h2>
       <p className={cls.subtitle}>
@@ -131,7 +149,7 @@ const fetchMicrofloraData = useCallback(async (filtersPayload = {}, page = 1) =>
             <div className={cls.buttonSection}>
               <input 
                 type="text" 
-                name="search" 
+                name="f_s_name" 
                 id="search" 
                 placeholder="Поиск по наименованию"
                 className={cls.searchInput}
@@ -191,6 +209,7 @@ const fetchMicrofloraData = useCallback(async (filtersPayload = {}, page = 1) =>
               >
                 <option value="">Все организмы-источники</option>
               </select>
+              <button className={cls.addButton} type="submit" onClick={handleClearFilters}>Сброс</button>
             </div>
           </form>
         </div>    
@@ -227,7 +246,7 @@ const fetchMicrofloraData = useCallback(async (filtersPayload = {}, page = 1) =>
             <tr><td colSpan={16}><LoadingState /></td></tr>
           ) : (
             microflora.length
-            ? visibleMicroflora.map((item, i) => (
+            ? microflora.map((item, i) => (
               <MicrofloraCard flora={item} key={startIndex + i}/>
             ))
             : <tr><td className={cls.emptyPage} colSpan={16}>Документы не найдены.</td></tr>
@@ -235,7 +254,16 @@ const fetchMicrofloraData = useCallback(async (filtersPayload = {}, page = 1) =>
         </tbody>
       </table>
     </div>
-    <Pagination totalItems={totalMicroflora} pageSize={pageSize} currentPage={currentPage} onPageChange={setCurrentPage} />
+    <Pagination 
+      totalItems={
+        totalSearchMicroflora
+        ? totalSearchMicroflora
+        : totalMicroflora
+      } 
+      pageSize={pageSize} 
+      currentPage={currentPage} 
+      onPageChange={setCurrentPage} 
+    />
     </div>
   )
 }

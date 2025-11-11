@@ -69,6 +69,17 @@ const NewsPage = () => {
     fetchNewsData();
   };
 
+  const handleClearFilters = (e) => {
+    e.preventDefault();
+    setFilters({
+      search: '',
+      date_from: '',
+      date_to: ''
+    });
+    setCurrentPage(1);
+    fetchNewsData();
+  }
+
   useEffect(() => {
     fetchNewsData();
   }, [currentPage, fetchNewsData]);
@@ -118,6 +129,7 @@ const NewsPage = () => {
                 value={filters.date_to}
                 onChange={handleFilterChange}
                 />
+              <button onClick={handleClearFilters} className={cls.addButton} type='submit'>Сброс</button>
             </div>
             </form>
         </div>    

@@ -90,6 +90,19 @@ const DocumentsPage = () => {
     e.preventDefault();
     fetchDocumentsData();
   };
+  
+  const handleClearFilters = (e) => {
+    e.preventDefault();
+    setFilters({
+      search: '',
+      date_from: '',
+      date_to: '',
+      kind: '',
+      status: ''
+    });
+    setCurrentPage(1);
+    fetchDocumentsData();
+  }
 
   useEffect(() => {
     fetchDocumentsData();
@@ -161,6 +174,7 @@ const DocumentsPage = () => {
               >
                 <option value="">Все статусы</option>
               </select>
+              <button className={cls.addButton} onClick={handleClearFilters} type='submit'>Сброс</button>
             </div>
           </div>
         </form>

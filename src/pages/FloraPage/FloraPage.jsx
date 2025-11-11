@@ -23,7 +23,7 @@ const FloraPage = () => {
 
   useEffect(() => {
     frappe.getDoc('Cat Microflora', id).then(res => setCurrentFlora(res))
-    frappe.client.get('api/method/gisbb_public_contour.www.react_page.get_microflora_filters').then(res => { 
+    frappe.client.get('api/method/gisbb_public_contour.www.public.index.get_microflora_filters').then(res => { 
       setFloraOptions({
         f_s_organizations: res?.data?.message?.f_s_organizations || [],
         f_s_kinds: res?.data?.message?.f_s_kinds || [],

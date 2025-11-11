@@ -122,8 +122,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
 
-  .addButton {
+.addButton {
     margin-left: 8px;
     padding: 10px 20px;
     background-color: #182093;
@@ -132,7 +133,6 @@
     border-radius: 5px;
     cursor: pointer;
   }
-}
 
 .subtitle {
   width: 100%;
