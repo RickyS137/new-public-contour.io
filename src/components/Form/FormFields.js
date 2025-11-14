@@ -33,8 +33,8 @@ export const forms = {
       { name: 'f_s_kind', label: 'Род', type: 'input', required: true, doctype: 'Cat Microflora', },
       { name: 'f_s_view', label: 'Вид', type: 'input', required: true, doctype: 'Cat Microflora', },
       { name: 'f_s_name', label: 'Наименование (номер)', type: 'input', required: true, doctype: 'Cat Microflora', },
-      { name: 'f_s_culture_type', label: 'Тип культуры', type: 'input', required: true, doctype: 'Cat Microflora', },
-      { name: 'f_s_culture_props', label: 'Культурально-морфологические свойства', type: 'select', required: true, doctype: 'Cat Microflora', },
+      { name: 'f_s_culture_type', label: 'Тип культуры', type: 'select', required: true, doctype: 'Cat Microflora', },
+      { name: 'f_s_culture_props', label: 'Культурально-морфологические свойства', options: ['Да', 'Нет'], type: 'select', required: true, doctype: 'Cat Microflora', },
       { name: 'f_s_enzyme_activity', label: 'Профиль ферментативной активности', type: 'select', required: true, options: ['Да', 'Нет'], doctype: 'Cat Microflora', },
       { name: 'f_s_antigenic_structure', label: 'Антигенная структура', type: 'select', required: true, options: ['Да', 'Нет'], doctype: 'Cat Microflora', },
       { name: 'f_s_stability_profile', label: 'Профиль а/м устойчивости', type: 'select', required: true, options: ['Да', 'Нет'], doctype: 'Cat Microflora', },
@@ -43,7 +43,7 @@ export const forms = {
       { name: 'f_s_16s_rrna', label: '16S pPHK', type: 'select', required: true, options: ['Да', 'Нет'], doctype: 'Cat Microflora', },
       { name: 'f_s_sequencing', label: 'Секвенирование', type: 'select', required: true, options: ['Да', 'Нет'], doctype: 'Cat Microflora', },
       { name: 'f_s_organization', label: 'Организация', type: 'input', required: true, doctype: 'Cat Microflora', },
-      { name: 'f_s_object_of_symbiosis', label: 'Обьект симбиоза', type: 'input', required: true, doctype: 'Cat Microflora', },
+      { name: 'f_s_object_of_symbiosis', label: 'Организм-источник', type: 'input', required: true, doctype: 'Cat Microflora', },
       { name: 'f_s_note', label: 'Примечание', type: 'textarea', required: false, doctype: 'Cat Microflora', },
     ]
   }

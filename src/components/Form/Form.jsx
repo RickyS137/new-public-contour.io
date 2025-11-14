@@ -13,8 +13,8 @@ const Form = () => {
   const { formData, setField, resetForm, getFormData } = useFormStore();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [filterOptions, setFilterOptions] = useState({});
 
-  // Определяем doctype на основе имени формы
   const getDoctype = () => {
     switch(name) {
       case 'new':
@@ -28,9 +28,36 @@ const Form = () => {
     }
   };
 
-  // Очищаем форму при размонтировании
   useEffect(() => {
     return () => resetForm();
+  }, [resetForm]);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const res = await frappe.client.get('api/method/gisbb_public_contour.www.public.index.get_microflora_filters');
+        const msg = res?.data?.message || {};
+        console.log(msg);
+        
+        const opts = {};
+
+        if (msg.f_s_organizations && Array.isArray(msg.f_s_organizations)) opts['f_s_organization'] = msg.f_s_organizations;
+        if (msg.f_s_kinds && Array.isArray(msg.f_s_kinds)) opts['f_s_kind'] = msg.f_s_kinds;
+        if (msg.f_s_views && Array.isArray(msg.f_s_views)) opts['f_s_view'] = msg.f_s_views;
+        if (msg.f_s_culture_types && Array.isArray(msg.f_s_culture_types)) opts['f_s_culture_type'] = msg.f_s_culture_types;
+        if (msg.f_s_object_of_symbiosiss && Array.isArray(msg.f_s_object_of_symbiosiss)) {
+          opts['f_s_object_of_symbiosis'] = msg.f_s_object_of_symbiosiss;
+        } else if (msg.f_s_object_of_symbiosis && Array.isArray(msg.f_s_object_of_symbiosis)) {
+          opts['f_s_object_of_symbiosis'] = msg.f_s_object_of_symbiosis;
+        }
+
+        if (mounted) setFilterOptions(opts);
+      } catch (e) {
+        console.error('Error loading filter options for form:', e);
+      }
+    })();
+    return () => { mounted = false; };
   }, []);
 
   const renderFormTitle = () => {
@@ -51,7 +78,6 @@ const Form = () => {
     setError('');
   };
 
-  // Функция для обработки файлов перед сохранением
   const processFileFields = async (data, formConfig) => {
     const processedData = { ...data };
     
@@ -60,18 +86,15 @@ const Form = () => {
         const fieldValue = processedData[field.name];
         
         if (field.multiple && Array.isArray(fieldValue)) {
-          // Множественные файлы
           const uploadResults = await frappe.uploadMultipleFiles(fieldValue);
           const successfulUploads = uploadResults.filter(result => result.success);
           
           if (successfulUploads.length > 0) {
-            // Сохраняем массив URL файлов
             processedData[field.name] = successfulUploads.map(result => result.file_url);
           } else {
             processedData[field.name] = null;
           }
         } else if (fieldValue instanceof File) {
-          // Одиночный файл
           const uploadResult = await frappe.uploadFile(fieldValue);
           if (uploadResult.success) {
             processedData[field.name] = uploadResult.file_url;
@@ -79,7 +102,6 @@ const Form = () => {
             processedData[field.name] = null;
           }
         }
-        // Если fieldValue уже строка (URL), оставляем как есть
       }
     }
     
@@ -99,7 +121,6 @@ const Form = () => {
     const formKey = name === 'new' ? 'news' : name === 'document' ? 'document' : 'microflora';
     const formConfig = forms[formKey];
     
-    // Валидация обязательных полей
     const requiredFields = formConfig.fields.filter(field => field.required);
     
     for (const field of requiredFields) {
@@ -117,12 +138,10 @@ const Form = () => {
     setError('');
 
     try {
-      // Обрабатываем файловые поля перед сохранением
       data = await processFileFields(data, formConfig);
       
       await frappe.createDoc(doctype, data);
       
-      // Успешное создание
       resetForm();
       navigate(-1);
       
@@ -154,14 +173,14 @@ const Form = () => {
       <div className={cls.fields}>
         {forms[formKey].fields.map((field) => (
           <div key={field.name} className={cls.formField}>
-            <FieldInput 
+              <FieldInput 
               title={field.label}
               type={field.type}
               isEdit={true}
               value={formData[field.name] || ''}
               onChange={(value) => handleFieldChange(field.name, value)}
               required={field.required}
-              options={field.options ? field.options : []}
+              options={filterOptions[field.name] ?? (field.options ? field.options : [])}
               placeholder={field.placeholder}
               fieldname={field.name}
               doctype={field.doctype}
@@ -194,8 +213,7 @@ const Form = () => {
             <CustomButton 
               type="button" 
               variant="secondary" 
-              onClick={() => navigate(-1)}
-              disabled={isLoading}
+              onclick={() => navigate(-1)}
             >
               Вернуться
             </CustomButton>

@@ -164,20 +164,6 @@ const FloraPage = () => {
         <div className={cls.floraInfoRow}>
           <div className={cls.floraField}>
             <FieldInput
-              title="Отдел"
-              type="select"
-              value={isEdit ? editData.f_s_in_book : currentFlora.f_s_in_book}
-              onChange={val => handleInputChange('f_s_in_book', val)}
-              doctype={'Cat Microflora'}
-              options={floraOptions.f_s_organizations}
-              isEdit={isEdit}
-              />
-          </div>
-        </div>
-
-        <div className={cls.floraInfoRow}>
-          <div className={cls.floraField}>
-            <FieldInput
               title="Род"
               type="select"
               value={isEdit ? editData.f_s_kind : currentFlora.f_s_kind}

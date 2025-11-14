@@ -5,6 +5,7 @@
   border: none;
   border-radius: 8px;
   margin-left: 8px;
+  cursor: pointer;
 }
 
 .secondaryButton {
@@ -14,4 +15,5 @@
   border: none;
   border-radius: 8px;
   margin-left: 8px;
+  cursor: pointer;
 }

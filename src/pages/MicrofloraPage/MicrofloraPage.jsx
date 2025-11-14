@@ -55,8 +55,11 @@ const MicrofloraPage = () => {
   const { microflora, setMicroflora } = useMicrofloraStore()
   const [currentPage, setCurrentPage] = useState(1)
   const [totalMicroflora, setTotalMicroflora] = useState(0)
-  const [totalSearchMicroflora, setTotalSearchMicroflora] = useState(0)
+  const [totalSearchMicroflora, setTotalSearchMicroflora] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [auditOpen, setAuditOpen] = useState(false)
+  const [auditLoading, setAuditLoading] = useState(false)
+  const [auditLogs, setAuditLogs] = useState([])
   const { isAuthenticated } = useAuthStore()
   const pageSize = 20
   const startIndex = (currentPage - 1) * pageSize
@@ -81,8 +84,10 @@ const fetchMicrofloraData = useCallback(async (filtersPayload = {}, page = 1) =>
         setMicroflora([]);
       }
 
-      if (data && data.total_count !== undefined) {
+      if (data && data.total_count !== undefined && data.total_count !== null) {
         setTotalSearchMicroflora(data.total_count);
+      } else {
+        setTotalSearchMicroflora(null);
       }
 
       try {
@@ -128,6 +133,21 @@ const fetchMicrofloraData = useCallback(async (filtersPayload = {}, page = 1) =>
     fetchMicrofloraData({}, 1);
   }
 
+  const openAuditModal = async () => {
+    const auditData = await frappe.getList('Cat Microflora Version', {
+      fields: ['ref_doctype', 'f_s_edit_author', 'f_dt_creation_date', 'docname', 'f_s_field', 'f_s_original_value', 'f_s_new_value', 'name'],
+    })
+    setAuditLogs(auditData);
+    console.log(auditLogs);
+    setAuditOpen(true);
+  }
+
+  const closeAuditModal = () => {
+    setAuditOpen(false);
+    setAuditLogs([]);
+    setAuditLoading(false);
+  }
+
   useEffect(() => {
     fetchMicrofloraData(filters, currentPage);
   }, [currentPage, fetchMicrofloraData, filters]);
@@ -146,6 +166,9 @@ const fetchMicrofloraData = useCallback(async (filtersPayload = {}, page = 1) =>
       <div>
         <div className={cls.searchContainer}>
           <form className={cls.microfloraFiltersForm} onSubmit={handleFilterSubmit}>
+            { isAuthenticated && (
+                <button type="button" className={cls.searchButton} onClick={openAuditModal}>Журналирование изменений</button>
+              ) }
             <div className={cls.buttonSection}>
               <input 
                 type="text" 
@@ -254,9 +277,55 @@ const fetchMicrofloraData = useCallback(async (filtersPayload = {}, page = 1) =>
         </tbody>
       </table>
     </div>
+    {auditOpen && (
+      <div className={cls.modalOverlay} onClick={closeAuditModal}>
+        <div className={cls.modal} onClick={(e) => e.stopPropagation()}>
+          <div className={cls.modalHeader}>
+            <h3>Журнал изменений</h3>
+            <button onClick={closeAuditModal}>Закрыть</button>
+          </div>
+          <div className={cls.modalBody}>
+            <table className={cls.auditTable}>
+              <thead>
+                <tr>
+                  <td>Название документа</td>
+                  <td>Автор изменений</td>
+                  <td>Время изменений</td>
+                  <td>Измененное поле</td>
+                  <td>Старое значние</td>
+                  <td>Новое значние</td>
+                  <td>ID</td>
+                </tr>
+              </thead>
+              <tbody>
+                {auditLoading ? (
+                  <tr><td colSpan={7}><LoadingState /></td></tr>
+                ) : (
+                  auditLogs.length ? (
+                    auditLogs.map((log, idx) => (
+                      <tr key={idx}>
+                        <td>{log.docname || ''}</td>
+                        <td>{log.f_s_edit_author || ''}</td>
+                        <td>{log.f_dt_creation_date || ''}</td>
+                        <td>{log.f_s_field || ''}</td>
+                        <td>{log.f_s_original_value || ''}</td>
+                        <td>{log.f_s_new_value || ''}</td>
+                        <td>{log.name || ''}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr><td colSpan={7}>Нет данных</td></tr>
+                  )
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    )}
     <Pagination 
       totalItems={
-        totalSearchMicroflora
+        totalSearchMicroflora !== null
         ? totalSearchMicroflora
         : totalMicroflora
       } 

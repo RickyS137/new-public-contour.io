@@ -67,7 +67,6 @@
 
 .searchContainer {
   margin-bottom: 20px;
-  text-align: center;
 }
 
 .searchInput {
@@ -119,6 +118,7 @@
 }
 
 .buttonSection {
+  margin-top: 4px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -199,5 +199,86 @@ th {
   .microfloraSelects {
     flex-direction: column;
     row-gap: 8px;
+  }
+}
+
+/* Modal styles for audit log */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 1100px;
+  max-height: 85vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.modalHeader h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.modalHeader button {
+  background: transparent;
+  border: none;
+  color: #333;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 4px;
+}
+
+.modalBody {
+  padding: 12px 16px;
+  overflow: auto;
+}
+
+.auditTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.auditTable thead td {
+  background: #f7f7f7;
+  font-weight: 600;
+  position: sticky;
+  top: -12px;
+  z-index: 1;
+}
+
+.auditTable td, .auditTable th {
+  padding: 8px 10px;
+  border: 1px solid #e6e6e6;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 768px) {
+  .modal {
+    max-width: 95%;
+  }
+  .auditTable td, .auditTable th {
+    font-size: 12px;
+    padding: 6px 8px;
   }
 }
