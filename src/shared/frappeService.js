@@ -1,10 +1,24 @@
 import axios from 'axios';
 
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+// Normalize and choose a sensible base URL at runtime.
+const ENV_BASE = process.env.REACT_APP_BASE_URL;
+const ENV_PUBLIC = process.env.REACT_APP_BASE_URL_PUBLIC;
+
+function normalizeBaseUrl(url) {
+  if (!url) return null;
+  try {
+    return String(url).trim().replace(/\/+$/, '');
+  } catch (e) {
+    return url;
+  }
+}
+
+const BASE_URL = normalizeBaseUrl(ENV_BASE) || normalizeBaseUrl(ENV_PUBLIC) || (typeof window !== 'undefined' ? window.location.origin : '');
 
 class FrappeService {
   constructor({ baseUrl = BASE_URL, authToken = null } = {}) {
-    this.baseUrl = baseUrl;
+    // allow caller override, but normalize any provided value
+    this.baseUrl = normalizeBaseUrl(baseUrl) || BASE_URL;
     this.authToken = authToken;
     this.client = axios.create({
       baseURL: this.baseUrl,
