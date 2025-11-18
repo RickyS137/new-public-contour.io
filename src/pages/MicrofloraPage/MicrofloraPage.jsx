@@ -7,6 +7,7 @@ import Pagination from 'components/Pagination/Pagination'
 import { useNavigate } from 'react-router-dom'
 import LoadingState from 'components/LoadingState/LoadingState'
 import useAuthStore from 'store/auth.store'
+import AuditModal from 'components/AuditModal/AuditModal'
 
 
 const MicrofloraPage = () => {
@@ -16,6 +17,7 @@ const MicrofloraPage = () => {
     frappe.client.get('api/method/gisbb_public_contour.www.public.index.get_microflora_filters').then(res => {      
       const inBookSelect = document.getElementById('f_s_organization');
       res?.data?.message?.f_s_organizations?.forEach(opt => {
+        if (!inBookSelect) return;
         const optionElement = document.createElement('option');
         optionElement.value = opt;
         optionElement.textContent = opt;
@@ -23,6 +25,7 @@ const MicrofloraPage = () => {
       });
       const kindSelect = document.getElementById('f_s_kind');
       res?.data?.message?.f_s_kinds?.forEach(opt => {
+        if (!kindSelect) return;
         const optionElement = document.createElement('option');
         optionElement.value = opt;
         optionElement.textContent = opt;
@@ -30,6 +33,7 @@ const MicrofloraPage = () => {
       });
       const viewSelect = document.getElementById('f_s_view');
       res?.data?.message?.f_s_views?.forEach(opt => {
+        if (!viewSelect) return;
         const optionElement = document.createElement('option');
         optionElement.value = opt;
         optionElement.textContent = opt;
@@ -37,13 +41,15 @@ const MicrofloraPage = () => {
       });
       const cultureTypeSelect = document.getElementById('f_s_culture_type');
       res?.data?.message?.f_s_culture_types?.forEach(opt => {
+        if (!cultureTypeSelect) return;
         const optionElement = document.createElement('option');
         optionElement.value = opt;
         optionElement.textContent = opt;
         cultureTypeSelect.appendChild(optionElement);
       });
       const objectOfSymbiosisSelect = document.getElementById('f_s_object_of_symbiosis');
-      res?.data?.message?.f_s_object_of_symbiosiss?.forEach(opt => {
+      res?.data?.message?.f_s_object_of_symbiosis?.forEach(opt => {
+        if (!objectOfSymbiosisSelect) return;
         const optionElement = document.createElement('option');
         optionElement.value = opt;
         optionElement.textContent = opt;
@@ -58,8 +64,6 @@ const MicrofloraPage = () => {
   const [totalSearchMicroflora, setTotalSearchMicroflora] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [auditOpen, setAuditOpen] = useState(false)
-  const [auditLoading, setAuditLoading] = useState(false)
-  const [auditLogs, setAuditLogs] = useState([])
   const { isAuthenticated } = useAuthStore()
   const pageSize = 20
   const startIndex = (currentPage - 1) * pageSize
@@ -133,20 +137,10 @@ const fetchMicrofloraData = useCallback(async (filtersPayload = {}, page = 1) =>
     fetchMicrofloraData({}, 1);
   }
 
-  const openAuditModal = async () => {
-    const auditData = await frappe.getList('Cat Microflora Version', {
-      fields: ['ref_doctype', 'f_s_edit_author', 'f_dt_creation_date', 'docname', 'f_s_field', 'f_s_original_value', 'f_s_new_value', 'name'],
-    })
-    setAuditLogs(auditData);
-    console.log(auditLogs);
+  const openAuditModal = () => {
     setAuditOpen(true);
   }
-
-  const closeAuditModal = () => {
-    setAuditOpen(false);
-    setAuditLogs([]);
-    setAuditLoading(false);
-  }
+  
 
   useEffect(() => {
     fetchMicrofloraData(filters, currentPage);
@@ -176,7 +170,7 @@ const fetchMicrofloraData = useCallback(async (filtersPayload = {}, page = 1) =>
                 id="search" 
                 placeholder="Поиск по наименованию"
                 className={cls.searchInput}
-                value={filters.search}
+                value={filters.f_s_name}
                 onChange={handleFilterChange}
               />
               <button type="submit" className={cls.searchButton}>Найти</button>
@@ -277,52 +271,14 @@ const fetchMicrofloraData = useCallback(async (filtersPayload = {}, page = 1) =>
         </tbody>
       </table>
     </div>
-    {auditOpen && (
-      <div className={cls.modalOverlay} onClick={closeAuditModal}>
-        <div className={cls.modal} onClick={(e) => e.stopPropagation()}>
-          <div className={cls.modalHeader}>
-            <h3>Журнал изменений</h3>
-            <button onClick={closeAuditModal}>Закрыть</button>
-          </div>
-          <div className={cls.modalBody}>
-            <table className={cls.auditTable}>
-              <thead>
-                <tr>
-                  <td>Название документа</td>
-                  <td>Автор изменений</td>
-                  <td>Время изменений</td>
-                  <td>Измененное поле</td>
-                  <td>Старое значние</td>
-                  <td>Новое значние</td>
-                  <td>ID</td>
-                </tr>
-              </thead>
-              <tbody>
-                {auditLoading ? (
-                  <tr><td colSpan={7}><LoadingState /></td></tr>
-                ) : (
-                  auditLogs.length ? (
-                    auditLogs.map((log, idx) => (
-                      <tr key={idx}>
-                        <td>{log.docname || ''}</td>
-                        <td>{log.f_s_edit_author || ''}</td>
-                        <td>{log.f_dt_creation_date || ''}</td>
-                        <td>{log.f_s_field || ''}</td>
-                        <td>{log.f_s_original_value || ''}</td>
-                        <td>{log.f_s_new_value || ''}</td>
-                        <td>{log.name || ''}</td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr><td colSpan={7}>Нет данных</td></tr>
-                  )
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    )}
+    {
+      auditOpen && (
+        <AuditModal
+          isOpen={auditOpen} 
+          setIsOpen={setAuditOpen}
+        />
+      )
+    }
     <Pagination 
       totalItems={
         totalSearchMicroflora !== null

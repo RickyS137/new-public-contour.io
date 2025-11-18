@@ -1,24 +1,39 @@
 import axios from 'axios';
 
-// Normalize and choose a sensible base URL at runtime.
-const ENV_BASE = process.env.REACT_APP_BASE_URL;
-const ENV_PUBLIC = process.env.REACT_APP_BASE_URL_PUBLIC;
+const devUrl = process.env.REACT_APP_BASE_URL_DEV;
+const testUrl = process.env.REACT_APP_BASE_URL_TEST;
+const publicUrl = process.env.REACT_APP_BASE_URL_PUBLIC;
 
 function normalizeBaseUrl(url) {
-  if (!url) return null;
-  try {
-    return String(url).trim().replace(/\/+$/, '');
-  } catch (e) {
-    return url;
+  if (!url || typeof url !== 'string') return null;
+  let normalized = url.trim();
+  if (normalized.endsWith('/')) {
+    normalized = normalized.slice(0, -1);
   }
+  return normalized;
 }
 
-const BASE_URL = normalizeBaseUrl(ENV_BASE) || normalizeBaseUrl(ENV_PUBLIC) || (typeof window !== 'undefined' ? window.location.origin : '');
+function selectBaseUrl() {
+  const host = typeof window !== 'undefined' ? window.location.hostname : null;
+  if (host) {
+    if (host.includes('dev')) {
+      return normalizeBaseUrl(devUrl);
+    } else if (host.includes('gisbb')) {
+      return normalizeBaseUrl(testUrl);
+    } else {
+      return normalizeBaseUrl(publicUrl);
+    }
+  }
+  return normalizeBaseUrl(publicUrl);
+}
+
+const BASE_URL = selectBaseUrl();
+console.log(BASE_URL);
+
 
 class FrappeService {
   constructor({ baseUrl = BASE_URL, authToken = null } = {}) {
-    // allow caller override, but normalize any provided value
-    this.baseUrl = normalizeBaseUrl(baseUrl) || BASE_URL;
+    this.baseUrl = baseUrl;
     this.authToken = authToken;
     this.client = axios.create({
       baseURL: this.baseUrl,
